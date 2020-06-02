@@ -53,10 +53,24 @@
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 5%;
+    height: 5vh;
     background: #f8f9fa;
 }
 
+.description {
+	display: none;
+}
+
+@media (max-width: 768px) {
+  .description {
+	display: block;
+  }
+  .card{
+	max-width: 95vw !important;
+	width: 95vw;
+  }
+}
+  
 html {
   position: relative;
   min-height: 100%;
@@ -4764,7 +4778,8 @@ input[type="button"].btn-block {
   display: flex;
   -ms-flex-direction: column;
   flex-direction: column;
-  min-width: 0;
+  min-width: 212px;
+  max-width: 212px;
   word-wrap: break-word;
   background-color: #fff;
   background-clip: border-box;
