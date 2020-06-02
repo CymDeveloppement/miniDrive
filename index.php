@@ -1,12 +1,19 @@
+<?php
+	include("PHP/fonctions.php");
+	$Shop = new shop();
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=0.7, shrink-to-fit=no">
+	<meta name="viewport" content="width=device-width, initial-scale=0.75, shrink-to-fit=no">
 	<title>Produits</title>
 	<link href="css/bootstrap.css" rel="stylesheet">
 	<script type="text/javascript" src="js/jquery-3.5.1.js"></script>
 	<script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+	
+	<!-- Code JS pour afficher ou non les boutons d'ajout d'articles acheté -->
+	<script type="text/javascript" src="js/AcheterBtn.js"></script>
 </head>
 
 <body>
@@ -23,7 +30,9 @@
 			<!-- Nom de l'entreprise -->
 			<div class="text-center">
 				<a class="navbar-brand mb-0 h1" href="#">
-					Nom Entreprise
+					<?php
+						echo($Shop->getNomEntreprise());
+					?>
 				</a>
 				</br>
 			</div>
@@ -35,9 +44,9 @@
 			
 			<!-- Liste -->
 			<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-				<a class="dropdown-item" href="#">Action</a>
-				<a class="dropdown-item" href="#">Another action</a>
-				<a class="dropdown-item" href="#">Something else here</a>
+				<?php
+					echo($Shop->getProduitsNom());
+				?>
 			</div>
 		</div>
 		
@@ -52,21 +61,11 @@
 		<div class='card-group d-flex flex-wrap justify-content-center'>
 			<?php
 				// Appel de la fonction qui retourne les articles.
-				include("PHP/fonctions.php");
-				cardProduit();
+				echo($Shop->getProduitsCard());
+				//cardProduit();
 			?>
 		</div>
 		</br>
-	</div>
-	
-	<!-- Class d'affichage pour les terminaux non mobiles -->
-	<div class="PC">
-		
-	</div>
-	
-	<!-- Class d'affichage pour les terminaux mobiles -->
-	<div class="mobile">
-		
 	</div>
 	
 	<!-- Pied de page -->
@@ -75,17 +74,5 @@
 			<span class="text-dark">Conditions d'utilisations et textes légaux...</span>
 		</div>
 	</footer>
-	
-	<!-- Script pour tester les terminaux mobiles -->
-	<script type="text/javascript">
-		if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) )
-		{
-			document.getElementsByClassName("PC")[0].style.display ="none";
-		}
-		else
-		{
-			document.getElementsByClassName("mobile")[0].style.display ="none";
-		}
-	</script>
 </body>
 </html>
