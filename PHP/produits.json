@@ -12,7 +12,17 @@
 	],
 	"Infos": {
 		"Nom_Entreprise": "TestEntrepise",
-		"Telephone": "0606060606"
-	
+		"Telephone": "0606060606",
+		"Conditions": "Emplacement des conditions d'utilisations"
+	},
+	"Horaires": {
+		"Intervale": "15 M",
+		"Lundi": "8-12 12-17",
+		"Mardi": "8-12 12-17",
+		"Mercredi": "8-12 12-17",
+		"Jeudi": "8-12 12-17",
+		"Vendredi": "8-12 12-17",
+		"Samedi": "",
+		"Dimanche": ""
 	}
 }

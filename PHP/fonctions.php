@@ -17,46 +17,9 @@
 			$countInfos = sizeof($this->Infos);
 		}
 		
-		function getProduitsCard()
+		function getProduits()
 		{
-			$countProds = sizeof($this->Produits);
-			$i = 0;
-			$retour = "";
-			foreach($this->Produits as $row => $produit)
-			{
-				$i++;
-				$img = 'img'.$i;
-				
-				$retour.=("<div class='card border'>
-							<div class='card-body'>
-								<h5 class='card-title text-center'>$produit[nom]</h5>
-								<div class='d-flex'>
-									<img class='img-thumbnail align-middle' src='$produit[img_path]'>
-									<div class='d-flex justify-content-center'>
-										<p class='description pt-4 ml-2'>$produit[description]</p>
-									</div>
-								</div>
-							</div>
-							<div class='card-footer'>
-								<div class='mt-2 float-left'>
-									Prix: $produit[prix]
-								</div>
-								<div class='float-right'>
-									<input onclick='AcheterArticle(Acheter$img, $i)' type='button' value='Acheter' class='btn btn-primary text-right' id='Acheter$img' style='display: block;'></input>
-									<div class='countAchat$i' id='' style='display: block;'>
-										<div class='d-flex flex-row'>
-											<input onclick='MoinsArticle(Acheter$img, $i)' type='button' value='-' class='btn btn-primary text-right' id='btn-' style='display: block;'></input>
-											<p class='h6 px-2 mt-2' id='counter$i'></p>
-											<input onclick='PlusArticle($i)' type='button' value='+' class='btn btn-primary text-right' id='btn+' style='display: block;'></input>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>");
-				
-			}
-			$retour.='<script type="text/javascript">CacherNb('."$countProds".');</script>';
-			return($retour);
+			return($this->Produits);
 		}
 		
 		function getNomEntreprise()
@@ -71,13 +34,26 @@
 		
 		function getProduitsNom()
 		{
+			$i = 0;
 			$retour = "";
 			
 			foreach($this->Produits as $row => $produit)
 			{
-				$retour .= "<a class='dropdown-item' href='#'>$produit[nom]</a>";
+				$i++;
+				$newString[$i] = str_replace(" ","",$produit['nom']);
+				$retour .= "<a class='dropdown-item' data-toggle='modal' data-target='#exampleModal$newString[$i]'>$produit[nom]</a>";
 			}
 			return($retour);
+		}
+		
+		function getConditions()
+		{
+			return($this->Infos['Conditions']);
+		}
+		
+		function getHorraire()
+		{
+			return($this->Horaires);
 		}
 	}
 ?>
