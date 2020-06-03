@@ -46,3 +46,4 @@ function CacherNb(num)
 		countAchats.style.display = "none";
 	}
 }
+
