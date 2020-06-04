@@ -1,7 +1,3 @@
-
-<!-- Code JS pour afficher ou non les boutons d'ajout d'articles acheté -->
-<script type="text/javascript" src="js/AcheterBtn.js"></script>
-
 <?php
 	class shop
 	{
@@ -40,8 +36,8 @@
 			foreach($this->Produits as $row => $produit)
 			{
 				$i++;
-				$newString[$i] = str_replace(" ","",$produit['nom']);
-				$retour .= "<a class='dropdown-item' data-toggle='modal' data-target='#exampleModal$newString[$i]'>$produit[nom]</a>";
+				$newString[$i] = str_replace(" ","___",$produit['nom']);
+				$retour .= "<button class='dropdown-item' data-toggle='modal' data-target='#exampleModal$newString[$i]'>$produit[nom]</button>";
 			}
 			return($retour);
 		}
@@ -49,11 +45,6 @@
 		function getConditions()
 		{
 			return($this->Infos['Conditions']);
-		}
-		
-		function getHorraire()
-		{
-			return($this->Horaires);
 		}
 	}
 ?>
