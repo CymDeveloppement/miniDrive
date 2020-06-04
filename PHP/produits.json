@@ -1,7 +1,7 @@
 {
 	"Produits": [
 		{"nom":"bouteille de lait", "description":"1L","img_path":"img/lait.png", "prix":"1€"},
-		{"nom":"fromage", "description":"Meule", "img_path":"img/fromage.png", "prix":"1€"},
+		{"nom":"fromage", "description":"Meule", "img_path":"img/fromage.png", "prix":"2€"},
 		{"nom":"banane", "description":"Republique Dominicaine", "img_path":"img/banane.png", "prix":"3€"},
 		{"nom":"pomme", "description":"France", "img_path":"img/pomme.png", "prix":"4€"},
 		{"nom":"poire", "description":"France", "img_path":"img/poire.png", "prix":"5€"},
@@ -13,6 +13,7 @@
 	"Infos": {
 		"Nom_Entreprise": "TestEntrepise",
 		"Telephone": "0606060606",
+		"Email": "test@test.com",
 		"Conditions": "Emplacement des conditions d'utilisations"
 	},
 	"Horaires": {
