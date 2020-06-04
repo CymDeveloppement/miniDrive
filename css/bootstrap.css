@@ -61,6 +61,14 @@
 	display: none;
 }
 
+.achat {
+	
+}
+
+.commande {
+	display: none;
+}
+
 @media (max-width: 768px) {
   .description {
 	display: block;
