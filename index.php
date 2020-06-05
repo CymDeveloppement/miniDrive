@@ -9,14 +9,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=0.75, shrink-to-fit=no">
 	<title>Produits</title>
 	<link href="css/bootstrap.css" rel="stylesheet">
-	<script type="text/javascript" src="js/jquery-3.5.1.js"></script>
-	<script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
-	
 	<link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css"/>
-	<script type="text/javascript" src="DataTables/datatables.min.js"></script>
-	
-	<!-- Code JS pour afficher ou non les boutons d'ajout d'articles acheté -->
-	<script type="text/javascript" src="js/AcheterBtn.js"></script>
 </head>
 
 <body>
@@ -36,7 +29,7 @@
 			<!-- Nom de l'entreprise -->
 			<div class="text-center">
 				<a class="navbar-brand mb-0 h1" href="#">
-					<?php echo($Shop->getNomEntreprise()); ?>
+					<?php echo($Shop->Infos['Nom_Entreprise']); ?>
 				</a>
 				</br>
 			</div>
@@ -48,7 +41,13 @@
 			
 			<!-- Liste -->
 			<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-				<?php echo($Shop->getProduitsNom()); ?>
+				<?php
+					foreach($Shop->Produits as $produit)
+					{
+						$id = $Shop->idProd[$produit['nom']];
+						echo("<button class='dropdown-item' data-toggle='modal' data-target='#article$id'>$produit[nom]</button>");
+					}
+				?>
 			</div>
 		</div>
 		
@@ -62,21 +61,19 @@
 	<div class="achat">
 		<div class='card-group d-flex flex-wrap justify-content-center mb-5'>
 		<?php
-			// Appel de la fonction qui retourne les articles.
-			$produits = $Shop->getProduits();
 					
 			//Affichage des articles dans les card
-			$countProds = sizeof($produits);
-			$i = 0;
+			$countProds = sizeof($Shop->Produits);
 			$nomArticle;
-			foreach($produits as $row => $produit)
+			foreach($Shop->Produits as $produit)
 			{
-				$i++;
-				$img = 'img'.$i;
-				$nomArticle[$i] = str_replace(" ","___",$produit['nom']);
-				$prixSend[$i] = str_replace("€","",$produit['prix']);
+				$id = $Shop->idProd[$produit['nom']];
+				$img = 'img'.$id;
+				$prixSend[$id] = substr_replace($produit['prix'], '.', -2, 0);
+				$nomArticle[$id] = str_replace(" ","___",$produit['nom']);
+				
 				echo("<div class='card border '>
-						<div class='card-body' data-toggle='modal' data-target='#exampleModal$nomArticle[$i]'>
+						<div class='card-body' data-toggle='modal' data-target='#article$id'>
 							<h5 class='card-title text-center'>$produit[nom]</h5>
 							<div class='d-flex'>
 								<img class='img-thumbnail align-middle' src='$produit[img_path]'>
@@ -87,15 +84,15 @@
 						</div>
 						<div class='card-footer'>
 							<div class='mt-2 float-left'>
-								Prix: $produit[prix]
+								Prix: $prixSend[$id]€
 							</div>
 							<div class='float-right'>
-								<input onclick='AcheterArticle(Acheter$img, $i, $nomArticle[$i], $prixSend[$i])' type='button' value='Acheter' class='btn btn-primary text-right' id='Acheter$img' style='display: block;'></input>
-								<div class='countAchat$i' style='display: block;'>
+								<input onclick='AcheterArticle(Acheter$img, $id, $nomArticle[$id], $prixSend[$id])' type='button' value='Acheter' class='btn btn-primary text-right' id='Acheter$img' style='display: block;'></input>
+								<div class='countAchat$id' style='display: block;'>
 									<div class='d-flex flex-row'>
-										<input onclick='MoinsArticle(Acheter$img, $i, $nomArticle[$i], $prixSend[$i])' type='button' value='-' class='btn btn-primary text-right' id='btn-' style='display: block;'></input>
-										<p class='h6 px-2 mt-2' id='$nomArticle[$i]'></p>
-										<input onclick='PlusArticle($i, $nomArticle[$i], $prixSend[$i])' type='button' value='+' class='btn btn-primary text-right' id='btn+' style='display: block;'></input>
+										<input onclick='MoinsArticle(Acheter$img, $id, $nomArticle[$id], $prixSend[$id])' type='button' value='-' class='btn btn-primary text-right' id='btn-' style='display: block;'></input>
+										<p class='h6 px-2 mt-2' id='$nomArticle[$id]'></p>
+										<input onclick='PlusArticle($id, $nomArticle[$id], $prixSend[$id])' type='button' value='+' class='btn btn-primary text-right' id='btn+' style='display: block;'></input>
 									</div>
 								</div>
 							</div>
@@ -103,22 +100,22 @@
 					</div>");
 								
 			}
-			echo'<script type="text/javascript">CacherNb('."$countProds".');</script>';
+			$tttest = $id;
+			echo'';
 		?>
 		</div>
 	</div>
 		
 	<?php
-		$produits = $Shop->getProduits();
-		$i = 0;
-		foreach($produits as $row => $produit)
+		foreach($Shop->Produits as $produit)
 		{
-			$nomArticle[$i] = str_replace(" ","___",$produit['nom']);
-			echo("<div class='modal fade' id='exampleModal$nomArticle[$i]' tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+			$id = $Shop->idProd[$produit['nom']];
+			$nomArticle[$id] = str_replace(" ","___",$produit['nom']);
+			echo("<div class='modal fade' id='article$id' tabindex='-1' role='dialog' aria-labelledby='articleLabel' aria-hidden='true'>
 					<div class='modal-dialog' role='document'>
 						<div class='modal-content'>
 							<div class='modal-header'>
-								<h5 class='modal-title' id='exampleModalLabel'>$produit[nom]</h5>
+								<h5 class='modal-title' id='articleLabel'>$produit[nom]</h5>
 								<button type='button' class='close' data-dismiss='modal' aria-label='Close'>
 									<span aria-hidden='true'>&times;</span>
 								</button>
@@ -129,7 +126,6 @@
 						</div>
 					</div>
 				</div>");
-				$i++;
 		}
 	?>
 	
@@ -145,20 +141,77 @@
 					Choix de date et heure de livraison
 					<div class="dropdown">
 					
-						<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<button class="btn btn-secondary dropdown-toggle" id="dropdownDate" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							Choisir le jour
 						</button>
 						
 						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 						<?php
-							for ($i = 0; $i <= 4; $i++)
+							$jours = $Shop->Horaires['Nombre_Jour_Recup'];
+							
+							
+							
+							$joursOuverts = $Shop->Horaires['Jour'];
+							$joursOuvertsKey = array_keys($joursOuverts);
+							$t = array_keys($joursOuvertsKey);
+							$i = 0;
+							$j = 0;
+							$tests = date('N');
+							while ($i <= $jours-1)
 							{
-								$test = date('d/m/Y', strtotime('+'.$i.' day'));
-								echo("<button class='dropdown-item' onclick='SelectJour();'>$test</button>");
+								if (!empty($joursOuverts[$joursOuvertsKey[$tests-1]]))
+								{
+									$dateJour = date('d/m/Y', strtotime('+'.$i+$j.' day'));
+									$dateJS = new DateTime($dateJour);
+									$dateJS = json_encode($dateJS->format('m/d/Y'));
+									echo("<button class='dropdown-item' onclick='SelectJour(); DateSelect($dateJS);'>$dateJour</button>");
+									$i++;
+									$tests++;
+								}
+								else
+								{
+									$j++;
+									$tests++;
+								}
+								if ($tests == 8)
+								{
+									$tests = 1;
+								}
 							}
 						?>
 						</div>
 					</div>
+					
+					<div class="d-flex flex-wrap">
+						
+						<?php
+							$horaires = $Shop->Horaires;
+							
+							
+							
+							foreach ($joursOuvertsKey as $cles => $row)
+							{
+								//echo($cles+1);
+								//echo($row);
+								// if (!empty($joursOuverts[$row]))
+								// {
+									// $dateJour = date('d/m/Y', strtotime('+'.$i.' day'));
+									// $test = new DateTime($dateJour);
+									// $test = json_encode($test->format('d/m/Y'));
+									
+									// echo("<button class='dropdown-item' onclick='SelectJour(); DateSelect($test);'>$dateJour</button>");
+								// }
+								// else
+								// {
+									
+								// }
+							}
+							
+							
+						?>
+						
+					</div>
+					
 				</div>
 				
 				<!-- Gestion via PHP à faire -->
@@ -195,8 +248,14 @@
 	<!-- Pied de page -->
 	<footer class="footer">
 		<div class="container ml-2">
-			<span class="text-dark"><?php echo($Shop->getConditions()); ?></span>
+			<span class="text-dark"><?php echo($Shop->Infos['Conditions']); ?></span>
 		</div>
+		
+		<script type="text/javascript" src="js/jquery-3.5.1.js"></script>
+		<script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+		<script type="text/javascript" src="DataTables/datatables.min.js"></script>
+		<script type="text/javascript" src="js/AcheterBtn.js"></script>
+		<script type="text/javascript">CacherNb(<?php echo($tttest) ?>);</script>
 	</footer>
 </body>
 </html>

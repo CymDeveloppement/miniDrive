@@ -122,7 +122,13 @@ function AfficheTableau()
 	} );
 }
 
-function SelectJour()
+function DateSelect(date)
 {
-	
+	 var elem = document.getElementById('dropdownDate');
+	 elem.textContent = date;
 }
+
+
+
+
+
