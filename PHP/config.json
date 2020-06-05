@@ -1,0 +1,33 @@
+{
+	"Produits": [
+		{"nom":"bouteille de lait", "description":"1L","img_path":"img/lait.png", "prix":"100"},
+		{"nom":"fromage", "description":"Meule", "img_path":"img/fromage.png", "prix":"210"},
+		{"nom":"banane", "description":"Republique Dominicaine", "img_path":"img/banane.png", "prix":"300"},
+		{"nom":"pomme", "description":"France", "img_path":"img/pomme.png", "prix":"400"},
+		{"nom":"poire", "description":"France", "img_path":"img/poire.png", "prix":"500"},
+		{"nom":"poireau", "description":"Italie", "img_path":"img/poireaux.png", "prix":"600"},
+		{"nom":"carotte", "description":"France", "img_path":"img/carotte.png", "prix":"700"},
+		{"nom":"abricot", "description":"France", "img_path":"img/abricot.png", "prix":"800"},
+		{"nom":"fraise", "description":"Espagne", "img_path":"img/fraise.png", "prix":"900"}
+	],
+	"Infos": {
+		"Nom_Entreprise": "TestEntrepise",
+		"Telephone": "0606060606",
+		"Email": "test@test.com",
+		"Conditions": "Emplacement des conditions d'utilisations",
+		"Monaie": "€"
+	},
+	"Horaires": {
+		"Nombre_Jour_Recup": "5",
+		"Intervale": "15M",
+		"Jour": {
+			"Lundi": "8-12 13-17",
+			"Mardi": "8-12 14-17",
+			"Mercredi": "8-12 15-17",
+			"Jeudi": "8-12 16-17",
+			"Vendredi": "9-12 13-17",
+			"Samedi": "",
+			"Dimanche": ""
+		}
+	}
+}
