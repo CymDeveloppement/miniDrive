@@ -1,50 +1,30 @@
 <?php
 	class shop
 	{
+		public $Produits;
+		public $Infos;
+		public $Horaires;
+		public $idProd;
+		public $countProds;
+		public $countInfos;
+		private $i;
+		
 		function __construct() 
 		{
-			$all = file_get_contents("produits.json", true);
+			$all = file_get_contents("config.json", true);
 			$all = json_decode($all, true);
 			foreach ($all as $row => $innerArray)
 			{
 				$this->{$row} = $innerArray; 
 			}
-			$countProds = sizeof($this->Produits);
-			$countInfos = sizeof($this->Infos);
-		}
-		
-		function getProduits()
-		{
-			return($this->Produits);
-		}
-		
-		function getNomEntreprise()
-		{
-			return($this->Infos['Nom_Entreprise']);
-		}
-		
-		function getInfo()
-		{
-			return($this->Infos);
-		}
-		
-		function getProduitsNom()
-		{
-			$i = 0;
-			$retour = "";
-			
-			foreach($this->Produits as $row => $produit)
+			$this->countProds = sizeof($this->Produits);
+			$this->countInfos = sizeof($this->Infos);
+			$this->idProd = array();
+			$this->i = 1;
+			foreach ($this->Produits as $produit)
 			{
-				$i++;
-				$newString[$i] = str_replace(" ","___",$produit['nom']);
-				$retour .= "<button class='dropdown-item' data-toggle='modal' data-target='#exampleModal$newString[$i]'>$produit[nom]</button>";
+				$this->idProd[$produit['nom']] = $this->i++;
 			}
-			return($retour);
-		}
-		
-		function getConditions()
-		{
-			return($this->Infos['Conditions']);
 		}
 	}
 ?>
