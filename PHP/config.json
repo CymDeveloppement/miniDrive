@@ -15,11 +15,12 @@
 		"Telephone": "0606060606",
 		"Email": "test@test.com",
 		"Conditions": "Emplacement des conditions d'utilisations",
-		"Monaie": "€"
+		"Monnaie": "€"
 	},
 	"Horaires": {
 		"Nombre_Jour_Recup": "5",
-		"Intervale": "15M",
+		"Intervalle": "2M",
+		
 		"Jour": {
 			"Lundi": "8-12 13-17",
 			"Mardi": "8-12 14-17",
@@ -29,5 +30,52 @@
 			"Samedi": "",
 			"Dimanche": ""
 		}
+	},
+	
+	"Jours": {
+		"Lundi": [
+			"8",
+			"12",
+			"13",
+			"15",
+			"16",
+			"18"
+		],
+		"Mardi": [
+			"9",
+			"13",
+			"14",
+			"16",
+			"17",
+			"19"
+		],
+		"Mercredi": [
+			"10",
+			"14",
+			"15",
+			"17",
+			"18",
+			"20"
+		],
+		"Jeudi": [
+			"11",
+			"15",
+			"16",
+			"18",
+			"19",
+			"21"
+		],
+		"Vendredi": [
+			"12",
+			"16",
+			"17",
+			"19"
+		],
+		"Samedi": [
+		
+		],
+		"Dimanche": [
+			
+		]
 	}
 }
