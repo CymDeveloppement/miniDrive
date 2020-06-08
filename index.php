@@ -17,7 +17,7 @@
 	<div class="navbar navbar-expand-md navbar-dark bg-dark">
 		
 		<div class="achat">
-			<input onclick='Commande(); AfficheTableau();' type='button' class="btn btn-secondary text-light lx-auto h-75" value='Commander'></input>
+			<input onclick='Commande(); AfficheTableau(<?php echo(json_encode($Shop->Infos['Monnaie'])); ?>);' type='button' class="btn btn-secondary text-light lx-auto h-75" value='Commander'></input>
 		</div>
 		
 		<div class="commande">
@@ -60,17 +60,18 @@
 	<!-- Tableau d'articles -->
 	<div class="achat">
 		<div class='card-group d-flex flex-wrap justify-content-center mb-5'>
-		<?php
-					
+		<?php	
 			//Affichage des articles dans les card
-			$countProds = sizeof($Shop->Produits);
-			$nomArticle;
 			foreach($Shop->Produits as $produit)
 			{
 				$id = $Shop->idProd[$produit['nom']];
+				$monnaie = $Shop->Infos['Monnaie'];
+				$prix = $Shop->prix[$id-1];
+				
 				$img = 'img'.$id;
-				$prixSend[$id] = substr_replace($produit['prix'], '.', -2, 0);
-				$nomArticle[$id] = str_replace(" ","___",$produit['nom']);
+				
+				$nomArticle[$id] = $Shop->EncoderJSON($produit['nom']);
+				$prixSend = $Shop->EncoderJSON($Shop->prix[$id-1]);
 				
 				echo("<div class='card border '>
 						<div class='card-body' data-toggle='modal' data-target='#article$id'>
@@ -83,16 +84,16 @@
 							</div>
 						</div>
 						<div class='card-footer'>
-							<div class='mt-2 float-left'>
-								Prix: $prixSend[$id]€
+							<div class='mt-2 h6 float-left'>
+								$prix$monnaie
 							</div>
 							<div class='float-right'>
-								<input onclick='AcheterArticle(Acheter$img, $id, $nomArticle[$id], $prixSend[$id])' type='button' value='Acheter' class='btn btn-primary text-right' id='Acheter$img' style='display: block;'></input>
+								<input onclick='AcheterArticle(Acheter$img, $id, recap$id, $prixSend, $nomArticle[$id])' type='button' value='Acheter' class='btn btn-primary text-right' id='Acheter$img' style='display: block;'></input>
 								<div class='countAchat$id' style='display: block;'>
 									<div class='d-flex flex-row'>
-										<input onclick='MoinsArticle(Acheter$img, $id, $nomArticle[$id], $prixSend[$id])' type='button' value='-' class='btn btn-primary text-right' id='btn-' style='display: block;'></input>
-										<p class='h6 px-2 mt-2' id='$nomArticle[$id]'></p>
-										<input onclick='PlusArticle($id, $nomArticle[$id], $prixSend[$id])' type='button' value='+' class='btn btn-primary text-right' id='btn+' style='display: block;'></input>
+										<input onclick='MoinsArticle(Acheter$img, $id, recap$id, $prixSend, $nomArticle[$id])' type='button' value='-' class='btn btn-primary text-right' id='btn-' style='display: block;'></input>
+										<p class='h6 px-2 mt-2' id='recap$id'></p>
+										<input onclick='PlusArticle($id, recap$id, $prixSend, $nomArticle[$id])' type='button' value='+' class='btn btn-primary text-right' id='btn+' style='display: block;'></input>
 									</div>
 								</div>
 							</div>
@@ -100,7 +101,7 @@
 					</div>");
 								
 			}
-			$tttest = $id;
+			$NbCard = $id;
 			echo'';
 		?>
 		</div>
@@ -110,7 +111,7 @@
 		foreach($Shop->Produits as $produit)
 		{
 			$id = $Shop->idProd[$produit['nom']];
-			$nomArticle[$id] = str_replace(" ","___",$produit['nom']);
+			
 			echo("<div class='modal fade' id='article$id' tabindex='-1' role='dialog' aria-labelledby='articleLabel' aria-hidden='true'>
 					<div class='modal-dialog' role='document'>
 						<div class='modal-content'>
@@ -149,35 +150,34 @@
 						<?php
 							$jours = $Shop->Horaires['Nombre_Jour_Recup'];
 							
-							
-							
 							$joursOuverts = $Shop->Horaires['Jour'];
 							$joursOuvertsKey = array_keys($joursOuverts);
 							$t = array_keys($joursOuvertsKey);
 							$i = 0;
 							$j = 0;
-							$tests = date('N');
+							$jourActuel = date('N');
 							while ($i <= $jours-1)
 							{
-								if (!empty($joursOuverts[$joursOuvertsKey[$tests-1]]))
+								if (!empty($joursOuverts[$joursOuvertsKey[$jourActuel-1]]))
 								{
 									$dateJour = date('d/m/Y', strtotime('+'.$i+$j.' day'));
 									$dateJS = new DateTime($dateJour);
 									$dateJS = json_encode($dateJS->format('m/d/Y'));
 									echo("<button class='dropdown-item' onclick='SelectJour(); DateSelect($dateJS);'>$dateJour</button>");
 									$i++;
-									$tests++;
+									$jourActuel++;
 								}
 								else
 								{
 									$j++;
-									$tests++;
+									$jourActuel++;
 								}
-								if ($tests == 8)
+								if ($jourActuel == 8)
 								{
-									$tests = 1;
+									$jourActuel = 1;
 								}
 							}
+						
 						?>
 						</div>
 					</div>
@@ -186,8 +186,6 @@
 						
 						<?php
 							$horaires = $Shop->Horaires;
-							
-							
 							
 							foreach ($joursOuvertsKey as $cles => $row)
 							{
@@ -206,8 +204,6 @@
 									
 								// }
 							}
-							
-							
 						?>
 						
 					</div>
@@ -255,7 +251,7 @@
 		<script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
 		<script type="text/javascript" src="DataTables/datatables.min.js"></script>
 		<script type="text/javascript" src="js/AcheterBtn.js"></script>
-		<script type="text/javascript">CacherNb(<?php echo($tttest) ?>);</script>
+		<script type="text/javascript">CacherNb(<?php echo($NbCard) ?>);</script>
 	</footer>
 </body>
 </html>

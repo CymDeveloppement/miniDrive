@@ -5,8 +5,10 @@
 		public $Infos;
 		public $Horaires;
 		public $idProd;
-		public $countProds;
-		public $countInfos;
+		public $prix;
+		public $monnaie;
+		public $Jours;
+		
 		private $i;
 		
 		function __construct() 
@@ -17,14 +19,19 @@
 			{
 				$this->{$row} = $innerArray; 
 			}
-			$this->countProds = sizeof($this->Produits);
-			$this->countInfos = sizeof($this->Infos);
-			$this->idProd = array();
+			$this->monnaie = $this->Infos['Monnaie'];
+			$this->prix = [];
 			$this->i = 1;
 			foreach ($this->Produits as $produit)
 			{
 				$this->idProd[$produit['nom']] = $this->i++;
+				array_push($this->prix, substr_replace($produit['prix'], '.', -2, 0));
 			}
+		}
+		
+		public function EncoderJSON($retour)
+		{
+			return(json_encode($retour));
 		}
 	}
 ?>
