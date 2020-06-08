@@ -1,7 +1,10 @@
 
 arrayCommande = {};
 arrayPrix = {};
-function AcheterArticle(button, num, nom, prix)
+arrayProduit = {};
+arrayId = {};
+
+function AcheterArticle(button, num, idProduit, prix, nom)
 {
 	var countAchats = document.querySelectorAll(".countAchat"+num);
 	button.style.display = "none";
@@ -9,43 +12,48 @@ function AcheterArticle(button, num, nom, prix)
 	{
 		achatButton.style.display = "block";
 	}
-	nom.textContent = 1;
-	arrayCommande[nom.id] = 1;
-	arrayPrix[nom.id] = prix;
+	idProduit.textContent = 1;
+	arrayCommande[idProduit.id] = 1;
+	arrayPrix[idProduit.id] = (Math.round(prix * 100) / 100).toFixed(2);
+	arrayProduit[idProduit.id] = nom;
 }
 			
-function PlusArticle(num, nom, prix)
+function PlusArticle(num, idProduit, prix, nom)
 {
-	var countNum = parseInt(nom.textContent, 10);
+	var countNum = parseInt(idProduit.textContent, 10);
 	var countAchats = document.querySelectorAll(".countAchat"+num);
 		
-	nom.textContent = countNum + 1;
-	arrayCommande[nom.id] = countNum + 1;
-	arrayPrix[nom.id] = prix;
+	idProduit.textContent = countNum + 1;
+	arrayCommande[idProduit.id] = countNum + 1;
+	arrayPrix[idProduit.id] = (Math.round(prix * 100) / 100).toFixed(2);
+	arrayProduit[idProduit.id] = nom;
 }
 			
-function MoinsArticle(button, num, nom, prix)
+function MoinsArticle(button, num, idProduit, prix, nom)
 {
-	var countNum = parseInt(nom.textContent, 10);
+	var countNum = parseInt(idProduit.textContent, 10);
 	var countAchats = document.querySelectorAll(".countAchat"+num);
 				
-	if (nom.textContent == 1)
+	if (idProduit.textContent == 1)
 	{
-		nom.textContent = 0;
+		idProduit.textContent = 0;
 		button.style.display = "block";
 		for (var achatButton of countAchats)
 		{
 			achatButton.style.display = "none";
 		}
 		
-		delete arrayCommande[nom.id];
-		delete arrayPrix[nom.id];
+		delete arrayCommande[idProduit.id];
+		delete arrayPrix[idProduit.id];
+		delete arrayProduit[idProduit.id];
 	}
 	else
 	{
-		nom.textContent = countNum - 1;
-		arrayCommande[nom.id] = countNum - 1;
-		arrayPrix[nom.id] = prix;
+		idProduit.textContent = countNum - 1;
+		
+		arrayCommande[idProduit.id] = countNum - 1;
+		arrayPrix[idProduit.id] = (Math.round(prix * 100) / 100).toFixed(2);
+		arrayProduit[idProduit.id] = nom;
 	}
 }
 
@@ -96,16 +104,16 @@ function Retour()
 	table.destroy();
 }
 
-function AfficheTableau()
+function AfficheTableau(monnaie)
 {
 	var dataSet = [];
 	var total = 0;
 	for (var objet of Object.keys(arrayCommande))
 	{
 		total += arrayPrix[objet]*arrayCommande[objet];
-		dataSet.push([ objet.replace(/___/g, " "), String(arrayPrix[objet])+"€", arrayCommande[objet], String(arrayPrix[objet]*arrayCommande[objet])+"€" ]);
+		dataSet.push([ arrayProduit[objet], String(arrayPrix[objet])+monnaie, arrayCommande[objet], String((Math.round(arrayPrix[objet]*arrayCommande[objet]* 100) / 100).toFixed(2))+monnaie ]);
 	}
-	dataSet.push([ "/", "/", "/", String(total)+"€" ]);
+	dataSet.push([ "/", "/", "/", String((Math.round(total* 100) / 100).toFixed(2))+ monnaie ]);
 	
 	$(document).ready(function() {
 		$('#Commande').DataTable( {
@@ -120,6 +128,11 @@ function AfficheTableau()
 			]
 		} );
 	} );
+}
+
+function SelectJour()
+{
+	
 }
 
 function DateSelect(date)
