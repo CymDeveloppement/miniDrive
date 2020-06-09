@@ -19,17 +19,7 @@
 	},
 	"Horaires": {
 		"Nombre_Jour_Recup": "5",
-		"Intervalle": "2M",
-		
-		"Jour": {
-			"Lundi": "8-12 13-17",
-			"Mardi": "8-12 14-17",
-			"Mercredi": "8-12 15-17",
-			"Jeudi": "8-12 16-17",
-			"Vendredi": "9-12 13-17",
-			"Samedi": "",
-			"Dimanche": ""
-		}
+		"Intervalle": "1H30M"
 	},
 	
 	"Jours": {
