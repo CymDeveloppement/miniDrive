@@ -130,15 +130,28 @@ function AfficheTableau(monnaie)
 	} );
 }
 
-function SelectJour()
-{
-	
-}
-
 function DateSelect(date)
 {
 	 var elem = document.getElementById('dropdownDate');
 	 elem.textContent = date;
+}
+
+function CacherBtnHeure(nb)
+{
+	var i = 1;
+	while (i < nb)
+	{
+		var lotBoutton = document.getElementById("lotBoutton"+i);
+		lotBoutton.style.display = "none";
+		i++;
+	}
+	i++;
+	while (i > nb && i < 7)
+	{
+		lotBoutton = document.getElementById("lotBoutton"+i);
+		lotBoutton.style.display = "none";
+		i++;
+	}
 }
 
 
