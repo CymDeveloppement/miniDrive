@@ -102,7 +102,6 @@
 								
 			}
 			$NbCard = $id;
-			echo'';
 		?>
 		</div>
 	</div>
@@ -131,14 +130,14 @@
 	?>
 	
 	<div class="commande">
-		<div class="jumbotron mx-4 my-4 d-block">
+		<div class="d-flex flex-wrap bd-highlight flex-column mx-4 my-4">
 			<div class="row">
 			
-				<div class="col-xl-4">
+				<div class="col-xl-4 flex-fill bd-highlight">
 					<table id="Commande" class="table table-bordered table-dark" width="100%"></table>
 				</div>
 				
-				<div class="col-xl-4 text-center">
+				<div class="col-xl-4 flex-fill bd-highlight text-center">
 					Choix de date et heure de livraison
 					<div class="dropdown">
 					
@@ -148,70 +147,69 @@
 						
 						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 						<?php
-							$jours = $Shop->Horaires['Nombre_Jour_Recup'];
+							$nbJoursAffiche = $Shop->Horaires['Nombre_Jour_Recup'];
+							$joursOuvertsKey = $Shop->GetKeys($Shop->Jours);
+							$nbJours = 0;
+							$jourSaute = 0;
+							$jourActuel = $Shop->DateJour();
 							
-							$joursOuverts = $Shop->Horaires['Jour'];
-							$joursOuvertsKey = array_keys($joursOuverts);
-							$t = array_keys($joursOuvertsKey);
-							$i = 0;
-							$j = 0;
-							$jourActuel = date('N');
-							while ($i <= $jours-1)
+							while ($nbJours <= $nbJoursAffiche-1)
 							{
-								if (!empty($joursOuverts[$joursOuvertsKey[$jourActuel-1]]))
+								if (!empty($Shop->Jours[$joursOuvertsKey[$jourActuel-1]]))
 								{
-									$dateJour = date('d/m/Y', strtotime('+'.$i+$j.' day'));
+									$dateJour = date('d-m-Y', strtotime('+'.$nbJours+$jourSaute.' day'));
 									$dateJS = new DateTime($dateJour);
-									$dateJS = json_encode($dateJS->format('m/d/Y'));
-									echo("<button class='dropdown-item' onclick='SelectJour(); DateSelect($dateJS);'>$dateJour</button>");
-									$i++;
-									$jourActuel++;
+									$dateJS = $Shop->EncoderJSON($dateJS->format('d-m-Y'));
+									echo("<button class='dropdown-item' onclick='DateSelect($dateJS);'>$dateJour</button>");
+									$nbJours++;
 								}
 								else
 								{
-									$j++;
-									$jourActuel++;
+									$jourSaute++;
 								}
-								if ($jourActuel == 8)
+								$jourActuel++;
+								if ($jourActuel >= 8)
 								{
 									$jourActuel = 1;
 								}
 							}
-						
 						?>
 						</div>
 					</div>
 					
-					<div class="d-flex flex-wrap">
-						
+					<div class="container">
 						<?php
-							$horaires = $Shop->Horaires;
-							
-							foreach ($joursOuvertsKey as $cles => $row)
+							$intervalle = $Shop->intervalle;
+							$nbBoutton = 1;
+							foreach ($Shop->Jours as $jours)
 							{
-								//echo($cles+1);
-								//echo($row);
-								// if (!empty($joursOuverts[$row]))
-								// {
-									// $dateJour = date('d/m/Y', strtotime('+'.$i.' day'));
-									// $test = new DateTime($dateJour);
-									// $test = json_encode($test->format('d/m/Y'));
+								echo("<div class='justify-content-center btn-group btn-group-toggle btn-group-justified row row-cols-4 mt-3' id='lotBoutton$nbBoutton' data-toggle='buttons'>");
+								
+								for ($i = 0; $i < count($jours); $i+=2)
+								{
+									$heureCompt = $jours[$i]*60;
 									
-									// echo("<button class='dropdown-item' onclick='SelectJour(); DateSelect($test);'>$dateJour</button>");
-								// }
-								// else
-								// {
-									
-								// }
+									while($heureCompt <= $jours[$i+1]*60)
+									{
+										$heureAffiche = intdiv($heureCompt,60)."H".$heureCompt%60;
+										echo("<label class='btn btn-outline-secondary col-sm-2 mx-1 my-1'>
+												<input type='radio' name='options' id='option1' autocomplete='off'> $heureAffiche
+											</label>");
+										$heureCompt += $intervalle;
+									}
+								}
+								$nbBoutton++;
+								echo("</div>");
 							}
 						?>
 						
-					</div>
 					
+					
+					</div>
 				</div>
 				
 				<!-- Gestion via PHP à faire -->
-				<div class="col-xl-4">
+				<div class="col-xl-4 flex-fill bd-highlight">
 					<form>
 						<div class="form-group">
 							<label for="Nom">Nom:</label>
@@ -251,7 +249,7 @@
 		<script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
 		<script type="text/javascript" src="DataTables/datatables.min.js"></script>
 		<script type="text/javascript" src="js/AcheterBtn.js"></script>
-		<script type="text/javascript">CacherNb(<?php echo($NbCard) ?>);</script>
+		<script type="text/javascript">CacherNb(<?php echo($NbCard); ?>); CacherBtnHeure(<?php echo($Shop->DateJour()); ?>);</script>
 	</footer>
 </body>
 </html>
