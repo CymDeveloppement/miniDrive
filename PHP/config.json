@@ -15,14 +15,12 @@
 		"Telephone": "0606060606",
 		"Email": "test@test.com",
 		"Conditions": "Emplacement des conditions d'utilisations",
-		"Monnaie": "€"
-	},
-	"Horaires": {
+		"Monnaie": "€",
 		"Nombre_Jour_Recup": "5",
 		"Intervalle": "1H30M"
 	},
 	
-	"Jours": {
+	"Horaires": {
 		"Lundi": [
 			"8",
 			"12",
