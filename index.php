@@ -1,6 +1,7 @@
 <?php
 	include("PHP/fonctions.php");
 	$Shop = new shop();
+	error_reporting(E_ALL);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -25,16 +26,16 @@
 		</div>
 		
 		<div class="dropdown mx-auto">
-		
-			<!-- Nom de l'entreprise -->
 			<div class="text-center">
 				<a class="navbar-brand mb-0 h1" href="#">
+				
+					<!-- Nom de l'entreprise -->
 					<?php echo($Shop->Infos['Nom_Entreprise']); ?>
 				</a>
 				</br>
 			</div>
 			
-			<!-- Bouton de la liste -->
+			<!-- Bouton de la liste d'article -->
 			<button class="btn btn-secondary dropdown-toggle achat" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				Liste des articles
 			</button>
@@ -44,8 +45,8 @@
 				<?php
 					foreach($Shop->Produits as $produit)
 					{
-						$id = $Shop->idProd[$produit['nom']];
-						echo("<button class='dropdown-item' data-toggle='modal' data-target='#article$id'>$produit[nom]</button>");
+						$id = $Shop->idProd[$produit->nom];
+						echo("<button class='dropdown-item' data-toggle='modal' data-target='#article$id'>$produit->nom</button>");
 					}
 				?>
 			</div>
@@ -60,136 +61,142 @@
 	<!-- Tableau d'articles -->
 	<div class="achat">
 		<div class='card-group d-flex flex-wrap justify-content-center mb-5'>
-		<?php	
-			//Affichage des articles dans les card
-			foreach($Shop->Produits as $produit)
-			{
-				$id = $Shop->idProd[$produit['nom']];
-				$monnaie = $Shop->Infos['Monnaie'];
-				$prix = $Shop->prix[$id-1];
-				
-				$img = 'img'.$id;
-				
-				$nomArticle[$id] = $Shop->EncoderJSON($produit['nom']);
-				$prixSend = $Shop->EncoderJSON($Shop->prix[$id-1]);
-				
-				echo("<div class='card border '>
-						<div class='card-body' data-toggle='modal' data-target='#article$id'>
-							<h5 class='card-title text-center'>$produit[nom]</h5>
-							<div class='d-flex'>
-								<img class='img-thumbnail align-middle' src='$produit[img_path]'>
-								<div class='d-flex justify-content-center'>
-									<p class='description pt-4 ml-2'>$produit[description]</p>
-								</div>
-							</div>
-						</div>
-						<div class='card-footer'>
-							<div class='mt-2 h6 float-left'>
-								$prix$monnaie
-							</div>
-							<div class='float-right'>
-								<input onclick='AcheterArticle(Acheter$img, $id, recap$id, $prixSend, $nomArticle[$id])' type='button' value='Acheter' class='btn btn-primary text-right' id='Acheter$img' style='display: block;'></input>
-								<div class='countAchat$id' style='display: block;'>
-									<div class='d-flex flex-row'>
-										<input onclick='MoinsArticle(Acheter$img, $id, recap$id, $prixSend, $nomArticle[$id])' type='button' value='-' class='btn btn-primary text-right' id='btn-' style='display: block;'></input>
-										<p class='h6 px-2 mt-2' id='recap$id'></p>
-										<input onclick='PlusArticle($id, recap$id, $prixSend, $nomArticle[$id])' type='button' value='+' class='btn btn-primary text-right' id='btn+' style='display: block;'></input>
+			<?php	
+				//Affichage des articles dans les card
+				foreach($Shop->Produits as $produit)
+				{
+					$id = $Shop->idProd[$produit->nom];
+					$monnaie = $Shop->Infos['Monnaie'];
+					$prix = $Shop->prix[$id-1];
+					$nomArticle[$id] = $Shop->EncoderJSON($produit->nom);
+					
+					echo("<div class='card border '>
+							<div class='card-body' data-toggle='modal' data-target='#article$id'>
+								<h5 class='card-title text-center'>$produit->nom</h5>
+								<div class='d-flex'>
+									<img class='img-thumbnail align-middle' src='$produit->img_path'>
+									<div class='d-flex justify-content-center'>
+										<p class='description pt-4 ml-2'>$produit->description</p>
 									</div>
 								</div>
 							</div>
-						</div>
-					</div>");
-								
-			}
-			$NbCard = $id;
-		?>
+							<div class='card-footer'>
+								<div class='mt-2 h6 float-left'>
+									$prix$monnaie
+								</div>
+								<div class='float-right'>
+									<input onclick='AcheterArticle(Acheterimg$id, $id, recap$id, $prix, $nomArticle[$id])' type='button' value='Acheter' class='btn btn-primary text-right' id='Acheterimg$id' style='display: block;'></input>
+									<div class='countAchat$id' style='display: block;'>
+										<div class='d-flex flex-row'>
+											<input onclick='MoinsArticle(Acheterimg$id, $id, recap$id, $prix, $nomArticle[$id])' type='button' value='-' class='btn btn-primary text-right' id='btn-' style='display: block;'></input>
+											<p class='h6 px-2 mt-2' id='recap$id'></p>
+											<input onclick='PlusArticle($id, recap$id, $prix, $nomArticle[$id])' type='button' value='+' class='btn btn-primary text-right' id='btn+' style='display: block;'></input>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>");
+									
+				}
+				$NbCard = $id;
+			?>
 		</div>
 	</div>
-		
+	
 	<?php
+		//Affichage des modal pour la description des articles
 		foreach($Shop->Produits as $produit)
 		{
-			$id = $Shop->idProd[$produit['nom']];
+			$id = $Shop->idProd[$produit->nom];
 			
 			echo("<div class='modal fade' id='article$id' tabindex='-1' role='dialog' aria-labelledby='articleLabel' aria-hidden='true'>
 					<div class='modal-dialog' role='document'>
 						<div class='modal-content'>
 							<div class='modal-header'>
-								<h5 class='modal-title' id='articleLabel'>$produit[nom]</h5>
+								<h5 class='modal-title' id='articleLabel'>$produit->nom</h5>
 								<button type='button' class='close' data-dismiss='modal' aria-label='Close'>
 									<span aria-hidden='true'>&times;</span>
 								</button>
 							</div>
 							<div class='modal-body'>
-								$produit[description]
+								$produit->description
 							</div>
 						</div>
 					</div>
 				</div>");
 		}
 	?>
-	
+
 	<div class="commande">
+	
 		<div class="d-flex flex-wrap bd-highlight flex-column mx-4 my-4">
 			<div class="row">
 			
+				<!-- Tableau de récapitulatif des articles choisis -->
 				<div class="col-xl-4 flex-fill bd-highlight">
 					<table id="Commande" class="table table-bordered table-dark" width="100%"></table>
 				</div>
 				
+				<!-- Choix de la date et des horaires -->
 				<div class="col-xl-4 flex-fill bd-highlight text-center">
-					Choix de date et heure de livraison
-					<div class="dropdown">
 					
+					<div class="dropdown">
+						
+						<!-- Bouton du dropdown pour choisir le jour -->
 						<button class="btn btn-secondary dropdown-toggle" id="dropdownDate" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							Choisir le jour
 						</button>
 						
+						<!-- Intérieur du dropdown -->
 						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-						<?php
-							$nbJoursAffiche = $Shop->Horaires['Nombre_Jour_Recup'];
-							$joursOuvertsKey = $Shop->GetKeys($Shop->Jours);
-							$nbJours = 0;
-							$jourSaute = 0;
-							$jourActuel = $Shop->DateJour();
-							
-							while ($nbJours <= $nbJoursAffiche-1)
-							{
-								if (!empty($Shop->Jours[$joursOuvertsKey[$jourActuel-1]]))
+							<?php
+								$nbJoursAffiche = $Shop->Infos['Nombre_Jour_Recup'];
+								$joursOuvertsKey = $Shop->GetKeys($Shop->Horaires);
+								$nbJours = 0;
+								$jourSaute = 0;
+								$jourActuel = $Shop->DateJour();
+								
+								while ($nbJours <= $nbJoursAffiche-1)
 								{
-									$dateJour = date('d-m-Y', strtotime('+'.$nbJours+$jourSaute.' day'));
-									$dateJS = new DateTime($dateJour);
-									$dateJS = $Shop->EncoderJSON($dateJS->format('d-m-Y'));
-									echo("<button class='dropdown-item' onclick='DateSelect($dateJS);'>$dateJour</button>");
-									$nbJours++;
+									if (!empty((array)$Shop->Horaires[$joursOuvertsKey[$jourActuel-1]]))
+									{
+										$dateJour = date('d-m-Y', strtotime('+'.$nbJours+$jourSaute.' day'));
+										$dateJS = new DateTime($dateJour);
+										$dateJS = $Shop->EncoderJSON($dateJS->format('d-m-Y'));
+										echo("<button class='dropdown-item' onclick='DateSelect($dateJS);'>$dateJour</button>");
+										$nbJours++;
+									}
+									else
+									{
+										$jourSaute++;
+									}
+									$jourActuel++;
+									if ($jourActuel >= 8)
+									{
+										$jourActuel = 1;
+									}
 								}
-								else
-								{
-									$jourSaute++;
-								}
-								$jourActuel++;
-								if ($jourActuel >= 8)
-								{
-									$jourActuel = 1;
-								}
-							}
-						?>
+							?>
 						</div>
 					</div>
 					
+					<!-- Affichage des horaires -->
 					<div class="container">
 						<?php
 							$intervalle = $Shop->intervalle;
 							$nbBoutton = 1;
-							foreach ($Shop->Jours as $jours)
+							$tt = $Shop->Horaires[4];
+							foreach ($Shop->Horaires as $jours)
 							{
 								echo("<div class='justify-content-center btn-group btn-group-toggle btn-group-justified row row-cols-4 mt-3' id='lotBoutton$nbBoutton' data-toggle='buttons'>");
-								
-								for ($i = 0; $i < count($jours); $i+=2)
+								for ($i = 0; $i < count(get_object_vars($jours)); $i+=2)
 								{
-									$heureCompt = $jours[$i]*60;
+									$id = "id"."$i";
+									$idPlusUn = 'id'.($i+1);
 									
-									while($heureCompt <= $jours[$i+1]*60)
+									$heureCompt = ($jours->$id)*60;
+									
+									while($heureCompt <= ($jours->$idPlusUn)*60)
 									{
 										$heureAffiche = intdiv($heureCompt,60)."H".$heureCompt%60;
 										echo("<label class='btn btn-outline-secondary col-sm-2 mx-1 my-1'>
