@@ -1,5 +1,5 @@
 <?php
-	include("PHP/fonctions.php");
+	include("PHP/fonctions.php-example");
 	$Shop = new shop();
 	error_reporting(E_ALL);
 ?>
