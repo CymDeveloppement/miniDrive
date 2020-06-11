@@ -1,5 +1,4 @@
 <?php
-	error_reporting(E_ALL);
 	class produit
 	{
 		function __construct($data,$id)
@@ -46,8 +45,6 @@
 		public $monnaie;
 		public $Jours;
 		public $intervalle;
-		
-		private $i;
 		
 		function __construct() 
 		{
@@ -104,10 +101,10 @@
 		
 		private function FormatagePrix()
 		{
-			$this->i = 1;
+			$i = 1;
 			foreach ($this->Produits as $produit)
 			{
-				$this->idProd[$produit->nom] = $this->i++;
+				$this->idProd[$produit->nom] = $i++;
 				array_push($this->prix, substr_replace($produit->prix, '.', -2, 0));
 			}
 		}
