@@ -2,7 +2,6 @@
 arrayCommande = {};
 arrayPrix = {};
 arrayProduit = {};
-arrayId = {};
 
 function AcheterArticle(button, num, idProduit, prix, nom)
 {
@@ -134,9 +133,12 @@ function DateSelect(date)
 {
 	 var elem = document.getElementById('dropdownDate');
 	 elem.textContent = date;
+	 
+	 date = new Date(date.replace( /(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3"));
+	 AfficherBtnHeures(date.getDay());
 }
 
-function CacherBtnHeure(nb)
+function AfficherBtnHeures(nb)
 {
 	var i = 1;
 	while (i < nb)
@@ -145,6 +147,8 @@ function CacherBtnHeure(nb)
 		lotBoutton.style.display = "none";
 		i++;
 	}
+	lotBoutton = document.getElementById("lotBoutton"+i);
+	lotBoutton.style.display = "block";
 	i++;
 	while (i > nb && i < 7)
 	{
@@ -154,6 +158,13 @@ function CacherBtnHeure(nb)
 	}
 }
 
+function CacherBtnHeure()
+{
+	for(var lotBouttons of document.querySelectorAll('*[id^="lotBoutton"]'))
+	{
+		lotBouttons.style.display = "none";
+	}
+}
 
 
 

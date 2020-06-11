@@ -1,9 +1,10 @@
-<?php
-	include("PHP/fonctions.php-example");
-	$Shop = new shop();
-	error_reporting(E_ALL);
-?>
 <!DOCTYPE html>
+<?php
+	session_start();
+	include("PHP/fonctions.php");
+	$Shop = new shop();
+	
+?>
 <html lang="fr">
 <head>
 	<meta charset="utf-8">
@@ -129,7 +130,7 @@
 
 	<div class="commande">
 	
-		<div class="d-flex flex-wrap bd-highlight flex-column mx-4 my-4">
+		<div class="d-flex flex-wrap bd-highlight flex-column mx-4 my-4 pb-4">
 			<div class="row">
 			
 				<!-- Tableau de récapitulatif des articles choisis -->
@@ -163,7 +164,7 @@
 										$dateJour = date('d-m-Y', strtotime('+'.$nbJours+$jourSaute.' day'));
 										$dateJS = new DateTime($dateJour);
 										$dateJS = $Shop->EncoderJSON($dateJS->format('d-m-Y'));
-										echo("<button class='dropdown-item' onclick='DateSelect($dateJS);'>$dateJour</button>");
+										echo("<button class='dropdown-item' onclick='DateSelect($dateJS,$nbJours);'>$dateJour</button>");
 										$nbJours++;
 									}
 									else
@@ -179,16 +180,15 @@
 							?>
 						</div>
 					</div>
-					
+					<div class="btn-group btn-group-toggle btn-group-justified" data-toggle='buttons'>
 					<!-- Affichage des horaires -->
 					<div class="container">
 						<?php
 							$intervalle = $Shop->intervalle;
 							$nbBoutton = 1;
-							$tt = $Shop->Horaires[4];
 							foreach ($Shop->Horaires as $jours)
 							{
-								echo("<div class='justify-content-center btn-group btn-group-toggle btn-group-justified row row-cols-4 mt-3' id='lotBoutton$nbBoutton' data-toggle='buttons'>");
+								echo("<div class='justify-content-center row row-cols-4 mt-3' id='lotBoutton$nbBoutton'>");
 								for ($i = 0; $i < count(get_object_vars($jours)); $i+=2)
 								{
 									$id = "id"."$i";
@@ -209,7 +209,7 @@
 								echo("</div>");
 							}
 						?>
-						
+					</div>
 					
 					
 					</div>
@@ -217,30 +217,37 @@
 				
 				<!-- Gestion via PHP à faire -->
 				<div class="col-xl-4 flex-fill bd-highlight">
+					
 					<form>
 						<div class="form-group">
 							<label for="Nom">Nom:</label>
-							<input type="text" class="form-control" id="Nom">
+							<input type="text" class="form-control" id="Nom" required>
 						</div>
 						<div class="form-group">
 							<label for="Prenom">Prénom:</label>
-							<input type="text" class="form-control" id="Prenom">
+							<input type="text" class="form-control" id="Prenom" required>
 						</div>
 						<div class="form-group">
 							<label for="Numero">Numéro de téléphone:</label>
-							<input type="numero" class="form-control" id="Numero">
+							<input type="numero" class="form-control" id="Numero" required>
 						</div>
 						<div class="form-group">
 							<label for="Email">Email:</label>
-							<input type="email" class="form-control" id="Email">
-						</div>
-						<div>
-							CAPTCHA
+							<input type="email" class="form-control" id="Email" required>
 						</div>
 						<div class="d-flex flex-row-reverse">
 							<button type="submit" class="btn btn-primary">Confirmer</button>
 						</div>
 					</form>
+					<div>
+						<form action="PHP/retourCaptcha.php" method="post" target="content">
+							<input type="text" name="captcha"/>
+							<input type="submit"/>
+							<img src="PHP/captcha.php" onclick="this.src='PHP/captcha.php?' + Math.random();" alt="captcha" style="cursor:pointer;">
+							<iframe name="content" frameborder="0" height="40vh" width="400vw"></iframe>
+						</form>
+					</div>
+					
 				</div>
 			</div>	
 		</div>
@@ -256,7 +263,7 @@
 		<script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
 		<script type="text/javascript" src="DataTables/datatables.min.js"></script>
 		<script type="text/javascript" src="js/AcheterBtn.js"></script>
-		<script type="text/javascript">CacherNb(<?php echo($NbCard); ?>); CacherBtnHeure(<?php echo($Shop->DateJour()); ?>);</script>
+		<script type="text/javascript">CacherNb(<?php echo($NbCard); ?>); CacherBtnHeure();</script>
 	</footer>
 </body>
 </html>
