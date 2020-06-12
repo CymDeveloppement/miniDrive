@@ -2,6 +2,8 @@
 arrayCommande = {};
 arrayPrix = {};
 arrayProduit = {};
+var selectedDate;
+var selectedHeure;
 
 function AcheterArticle(button, num, idProduit, prix, nom)
 {
@@ -15,6 +17,10 @@ function AcheterArticle(button, num, idProduit, prix, nom)
 	arrayCommande[idProduit.id] = 1;
 	arrayPrix[idProduit.id] = (Math.round(prix * 100) / 100).toFixed(2);
 	arrayProduit[idProduit.id] = nom;
+	if(Object.keys(arrayProduit).length !== 0)
+	{
+		$('#commandeBtn').prop('disabled', false);
+	}
 }
 			
 function PlusArticle(num, idProduit, prix, nom)
@@ -45,6 +51,10 @@ function MoinsArticle(button, num, idProduit, prix, nom)
 		delete arrayCommande[idProduit.id];
 		delete arrayPrix[idProduit.id];
 		delete arrayProduit[idProduit.id];
+		if(Object.keys(arrayProduit).length === 0)
+		{
+			$('#commandeBtn').prop('disabled', true);
+		}
 	}
 	else
 	{
@@ -127,15 +137,18 @@ function AfficheTableau(monnaie)
 			]
 		} );
 	} );
+	
 }
 
 function DateSelect(date)
 {
-	 var elem = document.getElementById('dropdownDate');
-	 elem.textContent = date;
-	 
-	 date = new Date(date.replace( /(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3"));
-	 AfficherBtnHeures(date.getDay());
+	var elem = document.getElementById('dropdownDate');
+	elem.textContent = date;
+	//console.log(date);
+	selectedDate = date;
+	
+	date = new Date(date.replace( /(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")); 
+	AfficherBtnHeures(date.getDay());
 }
 
 function AfficherBtnHeures(nb)
@@ -143,29 +156,55 @@ function AfficherBtnHeures(nb)
 	var i = 1;
 	while (i < nb)
 	{
-		var lotBoutton = document.getElementById("lotBoutton"+i);
-		lotBoutton.style.display = "none";
+		var lotBouton = document.getElementById("lotBouton"+i);
+		lotBouton.style.display = "none";
 		i++;
 	}
-	lotBoutton = document.getElementById("lotBoutton"+i);
-	lotBoutton.style.display = "block";
+	lotBouton = document.getElementById("lotBouton"+i);
+	lotBouton.style.display = "block";
 	i++;
 	while (i > nb && i < 7)
 	{
-		lotBoutton = document.getElementById("lotBoutton"+i);
-		lotBoutton.style.display = "none";
+		lotBouton = document.getElementById("lotBouton"+i);
+		lotBouton.style.display = "none";
 		i++;
 	}
 }
 
 function CacherBtnHeure()
 {
-	for(var lotBouttons of document.querySelectorAll('*[id^="lotBoutton"]'))
+	for(var lotBoutons of document.querySelectorAll('*[id^="lotBouton"]'))
 	{
-		lotBouttons.style.display = "none";
+		lotBoutons.style.display = "none";
 	}
 }
 
+function ChoixHeure()
+{
+	selectedHeure = $('#BoutonsSelectHeure input:radio:checked').val();
+	$('#BtnConfirmer').prop('disabled', false);
+}
+
+function RetourData()
+{
+	var retour = {}
+	retour.prix = Object.values(arrayPrix);
+	retour.quantite = Object.values(arrayCommande);
+	retour.nom = Object.values(arrayProduit);
+	retour.date = selectedDate;
+	retour.heure = selectedHeure;
+	
+	$(document).ready(function(){
+		$.ajax({
+			url : "PHP/Retour.php",
+			type: "POST",
+			data : {"retour" : retour}
+		});
+	});
+	
+	document.getElementById("retour").innerHTML = JSON.stringify(retour);
+	
+}
 
 
 
