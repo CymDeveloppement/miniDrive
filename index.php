@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <?php
-	session_start();
 	include("PHP/fonctions.php");
 	$Shop = new shop();
 	
@@ -19,7 +18,7 @@
 	<div class="navbar navbar-expand-md navbar-dark bg-dark">
 		
 		<div class="achat">
-			<input onclick='Commande(); AfficheTableau(<?php echo(json_encode($Shop->Infos['Monnaie'])); ?>);' type='button' class="btn btn-secondary text-light lx-auto h-75" value='Commander'></input>
+			<input onclick='Commande(); AfficheTableau(<?php echo(json_encode($Shop->Infos['Monnaie'])); ?>);' type='button' id='commandeBtn' class="btn btn-secondary text-light lx-auto h-75" value='Commander' disabled></input>
 		</div>
 		
 		<div class="commande">
@@ -140,7 +139,7 @@
 				
 				<!-- Choix de la date et des horaires -->
 				<div class="col-xl-4 flex-fill bd-highlight text-center">
-					
+					Choisisez une date puis une heure
 					<div class="dropdown">
 						
 						<!-- Bouton du dropdown pour choisir le jour -->
@@ -180,15 +179,15 @@
 							?>
 						</div>
 					</div>
-					<div class="btn-group btn-group-toggle btn-group-justified" data-toggle='buttons'>
+					<div class="btn-group btn-group-toggle btn-group-justified" id='BoutonsSelectHeure' data-toggle='buttons'>
 					<!-- Affichage des horaires -->
 					<div class="container">
 						<?php
 							$intervalle = $Shop->intervalle;
-							$nbBoutton = 1;
+							$nbBouton = 1;
 							foreach ($Shop->Horaires as $jours)
 							{
-								echo("<div class='justify-content-center row row-cols-4 mt-3' id='lotBoutton$nbBoutton'>");
+								echo("<div class='justify-content-center row row-cols-4 mt-3' id='lotBouton$nbBouton'>");
 								for ($i = 0; $i < count(get_object_vars($jours)); $i+=2)
 								{
 									$id = "id"."$i";
@@ -200,12 +199,12 @@
 									{
 										$heureAffiche = intdiv($heureCompt,60)."H".$heureCompt%60;
 										echo("<label class='btn btn-outline-secondary col-sm-2 mx-1 my-1'>
-												<input type='radio' name='options' id='option1' autocomplete='off'> $heureAffiche
+												<input type='radio' name='options' id='option1' autocomplete='off' onclick='ChoixHeure();' value='$heureAffiche'> $heureAffiche
 											</label>");
 										$heureCompt += $intervalle;
 									}
 								}
-								$nbBoutton++;
+								$nbBouton++;
 								echo("</div>");
 							}
 						?>
@@ -218,7 +217,7 @@
 				<!-- Gestion via PHP à faire -->
 				<div class="col-xl-4 flex-fill bd-highlight">
 					
-					<form>
+					<form action="PHP/retourCaptcha.php" autocomplete="off" method="post" target="captcha">
 						<div class="form-group">
 							<label for="Nom">Nom:</label>
 							<input type="text" class="form-control" id="Nom" required>
@@ -236,18 +235,14 @@
 							<input type="email" class="form-control" id="Email" required>
 						</div>
 						<div class="d-flex flex-row-reverse">
-							<button type="submit" class="btn btn-primary">Confirmer</button>
-						</div>
-					</form>
-					<div>
-						<form action="PHP/retourCaptcha.php" method="post" target="content">
-							<input type="text" name="captcha"/>
-							<input type="submit"/>
+							<button type="submit" class="btn btn-primary" id='BtnConfirmer' onclick="RetourData();" disabled>Confirmer</button>
+							<input type="text" placeholder="Captcha" class='mx-3' name="captcha"/>
 							<img src="PHP/captcha.php" onclick="this.src='PHP/captcha.php?' + Math.random();" alt="captcha" style="cursor:pointer;">
-							<iframe name="content" frameborder="0" height="40vh" width="400vw"></iframe>
-						</form>
-					</div>
-					
+						</div>
+						<iframe name="captcha" frameborder="0" height="40vh" width="400vw"></iframe>
+						<iframe name="iframename" frameborder="0" height="40vh" width="400vw"></iframe>
+					</form>
+					<p id='retour'> </p>
 				</div>
 			</div>	
 		</div>
