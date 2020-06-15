@@ -182,7 +182,7 @@ function CacherBtnHeure()
 function ChoixHeure()
 {
 	selectedHeure = $('#BoutonsSelectHeure input:radio:checked').val();
-	$('#BtnConfirmer').prop('disabled', false);
+	$('#BtnCaptcha').prop('disabled', false);
 }
 
 function RetourData()
@@ -194,16 +194,31 @@ function RetourData()
 	retour.date = selectedDate;
 	retour.heure = selectedHeure;
 	
+	var FormInfosClient = document.getElementById('FormInfosClient');
+	var data = new FormData(FormInfosClient);
+	
+	retour.prenomClient = data.get("PrenomClient");
+	retour.nomClient = data.get("NomClient");
+	retour.numeroClient = data.get("NumeroClient");
+	retour.emailClient = data.get("EmailClient");
+	
 	$(document).ready(function(){
 		$.ajax({
 			url : "PHP/Retour.php",
 			type: "POST",
-			data : {"retour" : retour}
+			data : {"retour" : retour},
+			success: function(response){
+                    document.getElementById("retour").innerHTML = response;
+                }
 		});
 	});
-	
-	document.getElementById("retour").innerHTML = JSON.stringify(retour);
-	
+	return false;
+}
+
+function AfficherBtnConfirmer()
+{
+	document.getElementById("FormCaptcha").style.display = "none";
+	$('#BtnConfirmer').prop('disabled', false);
 }
 
 

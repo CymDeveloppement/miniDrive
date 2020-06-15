@@ -217,31 +217,34 @@
 				<!-- Gestion via PHP à faire -->
 				<div class="col-xl-4 flex-fill bd-highlight">
 					
-					<form action="PHP/retourCaptcha.php" autocomplete="off" method="post" target="captcha">
+					<form id="FormInfosClient" autocomplete="off" onsubmit="return RetourData()">
 						<div class="form-group">
 							<label for="Nom">Nom:</label>
-							<input type="text" class="form-control" id="Nom" required>
+							<input type="text" class="form-control" name="NomClient" required>
 						</div>
 						<div class="form-group">
 							<label for="Prenom">Prénom:</label>
-							<input type="text" class="form-control" id="Prenom" required>
+							<input type="text" class="form-control" name="PrenomClient" required>
 						</div>
 						<div class="form-group">
 							<label for="Numero">Numéro de téléphone:</label>
-							<input type="numero" class="form-control" id="Numero" required>
+							<input type="numero" class="form-control" name="NumeroClient" required>
 						</div>
 						<div class="form-group">
 							<label for="Email">Email:</label>
-							<input type="email" class="form-control" id="Email" required>
+							<input type="email" class="form-control" name="EmailClient" required>
 						</div>
 						<div class="d-flex flex-row-reverse">
-							<button type="submit" class="btn btn-primary" id='BtnConfirmer' onclick="RetourData();" disabled>Confirmer</button>
-							<input type="text" placeholder="Captcha" class='mx-3' name="captcha"/>
-							<img src="PHP/captcha.php" onclick="this.src='PHP/captcha.php?' + Math.random();" alt="captcha" style="cursor:pointer;">
+							<button type="submit" class="btn btn-primary" id='BtnConfirmer' disabled>Confirmer</button>
+							
 						</div>
-						<iframe name="captcha" frameborder="0" height="40vh" width="400vw"></iframe>
-						<iframe name="iframename" frameborder="0" height="40vh" width="400vw"></iframe>
 					</form>
+					<form action="PHP/retourCaptcha.php" id="FormCaptcha" autocomplete="off" method="post" target="captcha">
+						<button type="submit" class="btn btn-primary" id='BtnCaptcha' disabled>Captcha</button>
+						<input type="text" placeholder="Captcha" class='mx-3' name="captcha"/>
+						<img src="PHP/captcha.php" onclick="this.src='PHP/captcha.php?' + Math.random();" alt="captcha" style="cursor:pointer;">
+					</form>
+					<iframe name="captcha" frameborder="0" height="40vh" width="400vw"></iframe>
 					<p id='retour'> </p>
 				</div>
 			</div>	
