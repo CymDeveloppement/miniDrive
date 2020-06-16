@@ -20,6 +20,7 @@ function AcheterArticle(button, num, idProduit, prix, nom)
 	if(Object.keys(arrayProduit).length !== 0)
 	{
 		$('#commandeBtn').prop('disabled', false);
+		$('#commandeBtn').attr('title', "");
 	}
 }
 			
@@ -54,6 +55,7 @@ function MoinsArticle(button, num, idProduit, prix, nom)
 		if(Object.keys(arrayProduit).length === 0)
 		{
 			$('#commandeBtn').prop('disabled', true);
+			$('#commandeBtn').attr('title', "Veuillez prendre un article avant de commander.");
 		}
 	}
 	else
@@ -126,8 +128,7 @@ function AfficheTableau(monnaie)
 	
 	$(document).ready(function() {
 		$('#Commande').DataTable( {
-		"pageLength": 5,
-		"order": [[ 3, "desc" ]],
+		"order": [[ 3, "asc" ]],
 		data: dataSet,
 			columns: [
 				{ title: "Produits" },
@@ -137,14 +138,13 @@ function AfficheTableau(monnaie)
 			]
 		} );
 	} );
-	
+	document.getElementById("PrixTotal").innerHTML = "Total a payer: "+String((Math.round(total* 100) / 100).toFixed(2))+ monnaie;
 }
 
 function DateSelect(date)
 {
 	var elem = document.getElementById('dropdownDate');
 	elem.textContent = date;
-	//console.log(date);
 	selectedDate = date;
 	
 	date = new Date(date.replace( /(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")); 
@@ -183,6 +183,7 @@ function ChoixHeure()
 {
 	selectedHeure = $('#BoutonsSelectHeure input:radio:checked').val();
 	$('#BtnCaptcha').prop('disabled', false);
+	$('#BtnCaptcha').tooltip('disable');
 }
 
 function RetourData()
@@ -219,6 +220,7 @@ function AfficherBtnConfirmer()
 {
 	document.getElementById("FormCaptcha").style.display = "none";
 	$('#BtnConfirmer').prop('disabled', false);
+	$('#BtnConfirmer').tooltip('disable');
 }
 
 
