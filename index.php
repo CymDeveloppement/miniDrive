@@ -16,9 +16,8 @@
 <body>
 	<!-- Navbar -->
 	<div class="navbar navbar-expand-md navbar-dark bg-dark">
-		
 		<div class="achat">
-			<input onclick='Commande(); AfficheTableau(<?php echo(json_encode($Shop->Infos['Monnaie'])); ?>);' type='button' id='commandeBtn' class="btn btn-secondary text-light lx-auto h-75" value='Commander' disabled></input>
+			<input onclick='Commande(); AfficheTableau(<?php echo(json_encode($Shop->Infos->Monnaie)); ?>);' type='button' id='commandeBtn' class="btn btn-secondary text-light lx-auto h-75" title='Veuillez prendre un article avant de commander.' value='Commander' disabled></input>
 		</div>
 		
 		<div class="commande">
@@ -30,7 +29,7 @@
 				<a class="navbar-brand mb-0 h1" href="#">
 				
 					<!-- Nom de l'entreprise -->
-					<?php echo($Shop->Infos['Nom_Entreprise']); ?>
+					<?php echo($Shop->Infos->Nom_Entreprise); ?>
 				</a>
 				</br>
 			</div>
@@ -66,7 +65,7 @@
 				foreach($Shop->Produits as $produit)
 				{
 					$id = $Shop->idProd[$produit->nom];
-					$monnaie = $Shop->Infos['Monnaie'];
+					$monnaie = $Shop->Infos->Monnaie;
 					$prix = $Shop->prix[$id-1];
 					$nomArticle[$id] = $Shop->EncoderJSON($produit->nom);
 					
@@ -128,7 +127,6 @@
 	?>
 
 	<div class="commande">
-	
 		<div class="d-flex flex-wrap bd-highlight flex-column mx-4 my-4 pb-4">
 			<div class="row">
 			
@@ -150,11 +148,11 @@
 						<!-- Intérieur du dropdown -->
 						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 							<?php
-								$nbJoursAffiche = $Shop->Infos['Nombre_Jour_Recup'];
-								$joursOuvertsKey = $Shop->GetKeys($Shop->Horaires);
+								$nbJoursAffiche = $Shop->Infos->Nombre_Jour_Recup;
+								$joursOuvertsKey = array_keys($Shop->Horaires);
 								$nbJours = 0;
 								$jourSaute = 0;
-								$jourActuel = $Shop->DateJour();
+								$jourActuel = date('N');
 								
 								while ($nbJours <= $nbJoursAffiche-1)
 								{
@@ -180,43 +178,44 @@
 						</div>
 					</div>
 					<div class="btn-group btn-group-toggle btn-group-justified" id='BoutonsSelectHeure' data-toggle='buttons'>
-					<!-- Affichage des horaires -->
-					<div class="container">
-						<?php
-							$intervalle = $Shop->intervalle;
-							$nbBouton = 1;
-							foreach ($Shop->Horaires as $jours)
-							{
-								echo("<div class='justify-content-center row row-cols-4 mt-3' id='lotBouton$nbBouton'>");
-								for ($i = 0; $i < count(get_object_vars($jours)); $i+=2)
+						
+						<!-- Affichage des horaires -->
+						<div class="container">
+							<?php
+								$intervalle = $Shop->intervalle;
+								$nbBouton = 1;
+								foreach ($Shop->Horaires as $jours)
 								{
-									$id = "id"."$i";
-									$idPlusUn = 'id'.($i+1);
-									
-									$heureCompt = ($jours->$id)*60;
-									
-									while($heureCompt <= ($jours->$idPlusUn)*60)
+									echo("<div class='justify-content-center row row-cols-4 mt-3' id='lotBouton$nbBouton'>");
+									for ($i = 0; $i < count(get_object_vars($jours)); $i+=2)
 									{
-										$heureAffiche = intdiv($heureCompt,60)."H".$heureCompt%60;
-										echo("<label class='btn btn-outline-secondary col-sm-2 mx-1 my-1'>
-												<input type='radio' name='options' id='option1' autocomplete='off' onclick='ChoixHeure();' value='$heureAffiche'> $heureAffiche
-											</label>");
-										$heureCompt += $intervalle;
+										$id = "id"."$i";
+										$idPlusUn = 'id'.($i+1);
+										
+										$heureCompt = ($jours->$id)*60;
+										
+										while($heureCompt <= ($jours->$idPlusUn)*60)
+										{
+											$heureAffiche = intdiv($heureCompt,60)."H".$heureCompt%60;
+											echo("<label class='btn btn-outline-secondary col-sm-2 mx-1 my-1'>
+													<input type='radio' name='options' id='option1' autocomplete='off' onclick='ChoixHeure();' value='$heureAffiche'> $heureAffiche
+												</label>");
+											$heureCompt += $intervalle;
+										}
 									}
+									$nbBouton++;
+									echo("</div>");
 								}
-								$nbBouton++;
-								echo("</div>");
-							}
-						?>
-					</div>
-					
-					
+							?>
+						</div>
 					</div>
 				</div>
 				
-				<!-- Gestion via PHP à faire -->
+				<!-- Formulaire -->
 				<div class="col-xl-4 flex-fill bd-highlight">
-					
+					<div class="text-center">
+						<u><p class="h3 text-decoration bg-light" id="PrixTotal"></p></u>
+					</div>
 					<form id="FormInfosClient" autocomplete="off" onsubmit="return RetourData()">
 						<div class="form-group">
 							<label for="Nom">Nom:</label>
@@ -228,24 +227,27 @@
 						</div>
 						<div class="form-group">
 							<label for="Numero">Numéro de téléphone:</label>
-							<input type="numero" class="form-control" name="NumeroClient" required>
+							<input type="tel" pattern="[0-9]+" title="Numéro de téléphone." class="form-control" name="NumeroClient" required>
 						</div>
 						<div class="form-group">
 							<label for="Email">Email:</label>
 							<input type="email" class="form-control" name="EmailClient" required>
 						</div>
 						<div class="d-flex flex-row-reverse">
-							<button type="submit" class="btn btn-primary" id='BtnConfirmer' disabled>Confirmer</button>
-							
+							<button type="submit" class="btn btn-primary" id='BtnConfirmer' title="Veuillez compléter le captcha avant." disabled>Confirmer</button>
 						</div>
 					</form>
+					
+					<!-- Captcha -->
 					<form action="PHP/retourCaptcha.php" id="FormCaptcha" autocomplete="off" method="post" target="captcha">
-						<button type="submit" class="btn btn-primary" id='BtnCaptcha' disabled>Captcha</button>
+						<button type="submit" class="btn btn-primary" id='BtnCaptcha' title="Veuillez choisir une date avant." disabled>Captcha</button>
 						<input type="text" placeholder="Captcha" class='mx-3' name="captcha"/>
 						<img src="PHP/captcha.php" onclick="this.src='PHP/captcha.php?' + Math.random();" alt="captcha" style="cursor:pointer;">
 					</form>
+					
 					<iframe name="captcha" frameborder="0" height="40vh" width="400vw"></iframe>
 					<p id='retour'> </p>
+					
 				</div>
 			</div>	
 		</div>
@@ -254,13 +256,13 @@
 	<!-- Pied de page -->
 	<footer class="footer">
 		<div class="container ml-2">
-			<span class="text-dark"><?php echo($Shop->Infos['Conditions']); ?></span>
+			<span class="text-dark"><?php echo($Shop->Infos->Conditions); ?></span>
 		</div>
 		
 		<script type="text/javascript" src="js/jquery-3.5.1.js"></script>
 		<script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
 		<script type="text/javascript" src="DataTables/datatables.min.js"></script>
-		<script type="text/javascript" src="js/AcheterBtn.js"></script>
+		<script type="text/javascript" src="js/Shop.js"></script>
 		<script type="text/javascript">CacherNb(<?php echo($NbCard); ?>); CacherBtnHeure();</script>
 	</footer>
 </body>
