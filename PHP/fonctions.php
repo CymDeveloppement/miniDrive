@@ -12,7 +12,7 @@
 
 	class horaire
 	{
-		function __construct($data,$id)
+		function __construct($data)
 		{
 			$id = 0;
 			foreach ($data as $key => $value) {
@@ -24,13 +24,11 @@
 	
 	class info
 	{
-		public $Infos;
-		
-		function __construct($data,$id)
+		function __construct($data)
 		{
-			$this->id = $id;
-			foreach ($data as $key => $value) {
-				$this->{$key} = $value;
+			foreach($data as $key => $info)
+			{
+				$this->{$key} = $info;
 			}
 		}
 	}
@@ -51,46 +49,47 @@
 			$all = file_get_contents("config.json", true);
 			$all = json_decode($all, true);
 
-			foreach ($all['Produits'] as $key => $produit) {
+			foreach ($all['Produits'] as $key => $produit) 
+			{
 				$this->Produits[] = new produit($produit, $key);
 			}
 			
-			foreach ($all['Horaires'] as $key => $horaire)
+			foreach ($all['Horaires'] as $horaire)
 			{
-				$this->Horaires[] = new horaire($horaire, $key);
+				$this->Horaires[] = new horaire($horaire);
 			}
 			
-			$this->Infos = $all['Infos'];
-			
-			$this->monnaie = $this->Infos['Monnaie'];
+			$this->Infos = new info($all['Infos']);
 			
 			$this->FormatagePrix();
 			$this->CalculeIntervalEnMinute();
-			$this->Infos['Nom_Entreprise'];
+			$this->Infos->Nom_Entreprise;
+			
+			$this->monnaie = $this->Infos->Monnaie;
 		}
 		
-		
+		//Fonction qui transforme l'intervalle en minutes.
 		private function CalculeIntervalEnMinute()
 		{
-			if (strpos($this->Infos['Intervalle'], 'H'))
+			if (strpos($this->Infos->Intervalle, 'H'))
 			{
-				if (strpos($this->Infos['Intervalle'], 'M'))
+				if (strpos($this->Infos->Intervalle, 'M'))
 				{
-					$minutes = substr($this->Infos['Intervalle'], strpos($this->Infos['Intervalle'], 'H')+1, 2);
-					$heures = substr($this->Infos['Intervalle'], 0, strpos($this->Infos['Intervalle'], 'H')+1);
+					$minutes = substr($this->Infos->Intervalle, strpos($this->Infos->Intervalle, 'H')+1, 2);
+					$heures = substr($this->Infos->Intervalle, 0, strpos($this->Infos->Intervalle, 'H')+1);
 					$this->intervalle = $heures*60+$minutes;
 				}
 				else
 				{
-					$this->intervalle = substr_replace($this->Infos['Intervalle'], '', -1, 1);
+					$this->intervalle = substr_replace($this->Infos->Intervalle, '', -1, 1);
 					$this->intervalle *= 60;
 				}
 			}
 			else
 			{
-				if (strpos($this->Infos['Intervalle'], 'M'))
+				if (strpos($this->Infos->Intervalle, 'M'))
 				{
-					$this->intervalle = substr_replace($this->Infos['Intervalle'], '', -1, 1);
+					$this->intervalle = substr_replace($this->Infos->Intervalle, '', -1, 1);
 				}
 				else
 				{
@@ -99,6 +98,7 @@
 			}
 		}
 		
+		//Fonction qui formate le prix pour séparer les euros et les centimes.
 		private function FormatagePrix()
 		{
 			$i = 1;
@@ -109,6 +109,7 @@
 			}
 		}
 		
+		//Fonction qui transforme les variables pour les envoyer au javascript.
 		public function EncoderJSON($retour)
 		{
 			if(is_string($retour))
@@ -121,16 +122,5 @@
 			}
 			return($envoie);
 		}
-		
-		public function GetKeys($retour)
-		{
-			return(array_keys($retour));
-		}
-		
-		public function DateJour()
-		{
-			return(date('N'));
-		}
-		
 	}
 ?>
