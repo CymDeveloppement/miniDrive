@@ -13,7 +13,7 @@
 	"Infos": {
 		"Nom_Entreprise": "TestEntrepise",
 		"Telephone": "0606060606",
-		"Email": "test@test.com",
+		"Email": "bdwineur@gmail.com",
 		"Conditions": "Emplacement des conditions d'utilisations",
 		"Monnaie": "€",
 		"Nombre_Jour_Recup": "5",
@@ -22,42 +22,42 @@
 	
 	"Horaires": {
 		"Lundi": [
-			"8",
-			"12",
-			"13",
-			"15",
-			"16",
-			"18"
+			"8H30M",
+			"12H30M",
+			"13H",
+			"15H",
+			"16H",
+			"18H"
 		],
 		"Mardi": [
-			"9",
-			"13",
-			"14",
-			"16",
-			"17",
-			"19"
+			"9H",
+			"13H",
+			"14H",
+			"16H",
+			"17H",
+			"19H"
 		],
 		"Mercredi": [
-			"10",
-			"14",
-			"15",
-			"17",
-			"18",
-			"20"
+			"10H",
+			"14H",
+			"15H",
+			"17H",
+			"18H",
+			"20H"
 		],
 		"Jeudi": [
-			"11",
-			"15",
-			"16",
-			"18",
-			"19",
-			"21"
+			"11H",
+			"15H",
+			"16H",
+			"18H",
+			"19H",
+			"21H"
 		],
 		"Vendredi": [
-			"12",
-			"16",
-			"17",
-			"19"
+			"12H",
+			"16H",
+			"17H",
+			"19H"
 		],
 		"Samedi": [
 		

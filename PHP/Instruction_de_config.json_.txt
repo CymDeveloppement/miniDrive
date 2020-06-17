@@ -1,0 +1,65 @@
+
+Le fichier config.json permet d'ajouter des produits, les informations de l'entreprise et les horaires.
+
+*Les heures sont au format 24 heures.
+
+PRODUITS:
+	La catégorie produits se comporte comme une liste d'objets, elle contient:
+		-le nom,
+		-la description,
+		-le chemin vers une image,
+		-et le prix.
+		
+	Exemple:
+		{"nom":"nom de l'article", "description":"ici la description", "img_path":"ici le chemin vers l'image", "prix":"le prix en centime"},
+	
+	*Les noms de chaque catégorie ne doit pas être modifié.
+	*Le chemin de l'image partira du dossier contenant le fichier index.php.
+	*Le chemin de l'image doit contenir le nom du fichier avec son extension.
+	*Le prix devra être sous cette forme: "150". Correspond à 1€50.
+	*A la fin de chaque ligne d'objets sauf pour la dernière, il faudra mettre une virgule.
+	
+INFOS:
+	La catégorie infos est une liste, elle contient:
+		-le nom de l'entreprise,
+		-son téléphone,
+		-son email,
+		-les conditions d'utilisation,
+		-la monnaie utilisée,
+		-le nombre de jour d'avance à afficher pour la récupération de la commande,
+		-l'intervalle de temps entre chaque récupération de commande.
+	
+	*Le nom des catégories ne doit pas être modifié.
+	*L'intervalle doit comporter soit: des heures, des minutes ou les deux:
+		Exemple: "1H" ou "30M" ou "1H30M".
+		*Les nombres doivent être suivis de leurs unités: H pour heures et M pour minutes.
+		*Tout autre caractère ne sera pas interprété et les chiffres sans unités derières seront compris comme des heures.
+		
+	*De nouvelles catégories peuvent être rajoutées.
+	*A la fin de chaque ligne d'objets sauf pour la dernière, il faudra mettre une virgule.
+	
+HORAIRES:
+	La catégorie horaires est un objet de listes, elle contient:
+		-chaque jour de la semaine qui contient:
+			-une liste d'heures.
+	
+	Exemple:
+		"Lundi": [
+			"8H30M",
+			"12H",
+			"13H",
+			"15H",
+			"16H",
+			"18H"
+		]
+	-Dans cet exemple les horaires d'ouvertures sont: 8h30-12h, 13h-15h, 16h-18h.
+			
+	*Le nom des catégories ne doit pas être modifié.
+	*On peut y mettre autant d'heures que voulu, cependant il faut respecter le format: une heure d'ouverture puis une heure de fermeture.
+	*Une heure doit comporter soit: des heures, des minutes ou les deux:
+		Exemple: "1H" ou "30M" ou "1H30M".
+		*Les nombres doivent être suivis de leurs unités: H pour heures et M pour minutes.
+		*Tout autre caractère ne sera pas interprété et les chiffres sans unités derières seront compris comme des heures.
+		
+	*A la fin de chaque ligne d'objets sauf pour la dernière, il faudra mettre une virgule.
+	
