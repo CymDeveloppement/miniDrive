@@ -62,40 +62,51 @@
 			$this->Infos = new info($all['Infos']);
 			
 			$this->FormatagePrix();
-			$this->CalculeIntervalEnMinute();
+			$this->Infos->Intervalle = $this->CalculeIntervalEnMinute($this->Infos->Intervalle);
+			
+			// Transforme tous les horaires d'ouvertures en minutes.
+			foreach ($this->Horaires as $keyHoraires => $listesHoraires)
+			{
+				foreach($listesHoraires as $keyListesHoraires => $horairesACalculer)
+				{
+					$this->Horaires[$keyHoraires]->$keyListesHoraires = $this->CalculeIntervalEnMinute($horairesACalculer);
+				}
+			}
+			
 			$this->Infos->Nom_Entreprise;
 			
 			$this->monnaie = $this->Infos->Monnaie;
 		}
 		
-		//Fonction qui transforme l'intervalle en minutes.
-		private function CalculeIntervalEnMinute()
+		//Fonction qui transforme les heures donées en minutes.
+		private function CalculeIntervalEnMinute($heure)
 		{
-			if (strpos($this->Infos->Intervalle, 'H'))
+			if (strpos($heure, 'H'))
 			{
-				if (strpos($this->Infos->Intervalle, 'M'))
+				if (strpos($heure, 'M'))
 				{
-					$minutes = substr($this->Infos->Intervalle, strpos($this->Infos->Intervalle, 'H')+1, 2);
-					$heures = substr($this->Infos->Intervalle, 0, strpos($this->Infos->Intervalle, 'H')+1);
-					$this->intervalle = $heures*60+$minutes;
+					$minutes = substr($heure, strpos($heure, 'H')+1, 2);
+					$heures = substr($heure, 0, strpos($heure, 'H')+1);
+					$heure = $heures*60+$minutes;
 				}
 				else
 				{
-					$this->intervalle = substr_replace($this->Infos->Intervalle, '', -1, 1);
-					$this->intervalle *= 60;
+					$heure = substr_replace($heure, '', -1, 1);
+					$heure *= 60;
 				}
 			}
 			else
 			{
-				if (strpos($this->Infos->Intervalle, 'M'))
+				if (strpos($heure, 'M'))
 				{
-					$this->intervalle = substr_replace($this->Infos->Intervalle, '', -1, 1);
+					$heure = substr_replace($heure, '', -1, 1);
 				}
 				else
 				{
-					$this->intervalle = 60;
+					$heure *= 60;
 				}
 			}
+			return($heure);
 		}
 		
 		//Fonction qui formate le prix pour séparer les euros et les centimes.
