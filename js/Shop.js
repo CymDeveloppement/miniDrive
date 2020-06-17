@@ -19,8 +19,9 @@ function AcheterArticle(button, num, idProduit, prix, nom)
 	arrayProduit[idProduit.id] = nom;
 	if(Object.keys(arrayProduit).length !== 0)
 	{
+		$('#defaultDisableAchat').tooltip('disable');
 		$('#commandeBtn').prop('disabled', false);
-		$('#commandeBtn').attr('title', "");
+		document.getElementById("commandeBtn").style.pointerEvents = "all";
 	}
 }
 			
@@ -54,8 +55,9 @@ function MoinsArticle(button, num, idProduit, prix, nom)
 		delete arrayProduit[idProduit.id];
 		if(Object.keys(arrayProduit).length === 0)
 		{
+			$('#defaultDisableAchat').tooltip('enable');
 			$('#commandeBtn').prop('disabled', true);
-			$('#commandeBtn').attr('title', "Veuillez prendre un article avant de commander.");
+			document.getElementById("commandeBtn").style.pointerEvents = "none";
 		}
 	}
 	else
@@ -76,6 +78,10 @@ function CacherNb(num)
 		var countAchats = document.querySelector(".countAchat"+i);
 		countAchats.style.display = "none";
 	}
+	
+	$(function () {
+	  $('[data-toggle="tooltip"]').tooltip()
+	});
 }
 	
 function CountCommande()
@@ -118,17 +124,24 @@ function Retour()
 function AfficheTableau(monnaie)
 {
 	var dataSet = [];
-	var total = 0;
+	var totalArgent = 0;
+	var totalQte = 0;
 	for (var objet of Object.keys(arrayCommande))
 	{
-		total += arrayPrix[objet]*arrayCommande[objet];
+		totalArgent += arrayPrix[objet]*arrayCommande[objet];
+		totalQte += arrayCommande[objet];
 		dataSet.push([ arrayProduit[objet], String(arrayPrix[objet])+monnaie, arrayCommande[objet], String((Math.round(arrayPrix[objet]*arrayCommande[objet]* 100) / 100).toFixed(2))+monnaie ]);
 	}
-	dataSet.push([ "/", "/", "/", String((Math.round(total* 100) / 100).toFixed(2))+ monnaie ]);
+	dataSet.push([ "Total à payer", "/", "Total articles: "+totalQte, String((Math.round(totalArgent* 100) / 100).toFixed(2))+ monnaie ]);
 	
 	$(document).ready(function() {
 		$('#Commande').DataTable( {
-		"order": [[ 3, "asc" ]],
+			"createdRow": function(row, data, dataIndex){
+			if(data[0] == "Total à payer"){
+				$(row).addClass('text-dark font-weight-bold h5 bg-warning');
+			}
+		},
+		"order": [[ 3, "desc" ]],
 		data: dataSet,
 			columns: [
 				{ title: "Produits" },
@@ -138,7 +151,7 @@ function AfficheTableau(monnaie)
 			]
 		} );
 	} );
-	document.getElementById("PrixTotal").innerHTML = "Total a payer: "+String((Math.round(total* 100) / 100).toFixed(2))+ monnaie;
+	document.getElementById("PrixTotal").innerHTML = "Total à payer: "+String((Math.round(totalArgent* 100) / 100).toFixed(2))+ monnaie;
 }
 
 function DateSelect(date)
@@ -183,7 +196,8 @@ function ChoixHeure()
 {
 	selectedHeure = $('#BoutonsSelectHeure input:radio:checked').val();
 	$('#BtnCaptcha').prop('disabled', false);
-	$('#BtnCaptcha').tooltip('disable');
+	$('#defaultDisableCaptcha').tooltip('disable');
+	document.getElementById("BtnCaptcha").style.pointerEvents = "all";
 }
 
 function RetourData()
@@ -220,7 +234,8 @@ function AfficherBtnConfirmer()
 {
 	document.getElementById("FormCaptcha").style.display = "none";
 	$('#BtnConfirmer').prop('disabled', false);
-	$('#BtnConfirmer').tooltip('disable');
+	$('#defaultDisableConfirmer').tooltip('disable');
+	document.getElementById("BtnConfirmer").style.pointerEvents = "all";
 }
 
 
