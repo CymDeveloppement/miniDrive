@@ -16,12 +16,12 @@
 <body>
 	<!-- Navbar -->
 	<div class="navbar navbar-expand-md navbar-dark bg-dark">
-		<div class="achat">
-			<input onclick='Commande(); AfficheTableau(<?php echo(json_encode($Shop->Infos->Monnaie)); ?>);' type='button' id='commandeBtn' class="btn btn-secondary text-light lx-auto h-75" title='Veuillez prendre un article avant de commander.' value='Commander' disabled></input>
+		<div class="achat" id="defaultDisableAchat" data-toggle="tooltip" data-placement="bottom" title='Veuillez prendre un article avant de commander.'>
+			<input onclick='Commande(); AfficheTableau(<?php echo(json_encode($Shop->Infos->Monnaie)); ?>);' type='button' id='commandeBtn' class="btn btn-secondary text-white lx-auto h-75" style="pointer-events: none;" value='Commander' disabled></input>
 		</div>
 		
 		<div class="commande">
-			<input onclick='Retour()' type='button' class="btn btn-secondary text-light lx-auto h-75" value='Retour'></input>
+			<input onclick='Retour()' type='button' class="btn btn-secondary text-white lx-auto h-75" value='Retour'></input>
 		</div>
 		
 		<div class="dropdown mx-auto">
@@ -73,7 +73,7 @@
 							<div class='card-body' data-toggle='modal' data-target='#article$id'>
 								<h5 class='card-title text-center'>$produit->nom</h5>
 								<div class='d-flex'>
-									<img class='img-thumbnail align-middle' src='$produit->img_path'>
+									<img class='img-thumbnail align-middle' src='$produit->img_path' alt='$produit->nom'>
 									<div class='d-flex justify-content-center'>
 										<p class='description pt-4 ml-2'>$produit->description</p>
 									</div>
@@ -131,12 +131,12 @@
 			<div class="row">
 			
 				<!-- Tableau de récapitulatif des articles choisis -->
-				<div class="col-xl-4 flex-fill bd-highlight">
+				<div class="col-xl-4 flex-fill bd-highlight mb-5">
 					<table id="Commande" class="table table-bordered table-dark" width="100%"></table>
 				</div>
 				
 				<!-- Choix de la date et des horaires -->
-				<div class="col-xl-4 flex-fill bd-highlight text-center">
+				<div class="col-xl-4 flex-fill bd-highlight text-center mb-5">
 					Choisisez une date puis une heure
 					<div class="dropdown">
 						
@@ -182,7 +182,7 @@
 						<!-- Affichage des horaires -->
 						<div class="container">
 							<?php
-								$intervalle = $Shop->intervalle;
+								$intervalle = $Shop->Infos->Intervalle;
 								$nbBouton = 1;
 								foreach ($Shop->Horaires as $jours)
 								{
@@ -192,9 +192,9 @@
 										$id = "id"."$i";
 										$idPlusUn = 'id'.($i+1);
 										
-										$heureCompt = ($jours->$id)*60;
+										$heureCompt = ($jours->$id);
 										
-										while($heureCompt <= ($jours->$idPlusUn)*60)
+										while($heureCompt <= ($jours->$idPlusUn))
 										{
 											$heureAffiche = intdiv($heureCompt,60)."H".$heureCompt%60;
 											echo("<label class='btn btn-outline-secondary col-sm-2 mx-1 my-1'>
@@ -213,8 +213,8 @@
 				
 				<!-- Formulaire -->
 				<div class="col-xl-4 flex-fill bd-highlight">
-					<div class="text-center">
-						<u><p class="h3 text-decoration bg-light" id="PrixTotal"></p></u>
+					<div class="text-center border bg-warning mb-2">
+						<u><p class="h3 text-decoration" id="PrixTotal"></p></u>
 					</div>
 					<form id="FormInfosClient" autocomplete="off" onsubmit="return RetourData()">
 						<div class="form-group">
@@ -234,13 +234,17 @@
 							<input type="email" class="form-control" name="EmailClient" required>
 						</div>
 						<div class="d-flex flex-row-reverse">
-							<button type="submit" class="btn btn-primary" id='BtnConfirmer' title="Veuillez compléter le captcha avant." disabled>Confirmer</button>
+							<span id="defaultDisableConfirmer" data-toggle="tooltip" data-placement="top" title="Veuillez compléter le captcha avant.">
+								<button type="submit" class="btn btn-primary" style="pointer-events: none;" id='BtnConfirmer' disabled>Confirmer</button>
+							</span>
 						</div>
 					</form>
 					
 					<!-- Captcha -->
-					<form action="PHP/retourCaptcha.php" id="FormCaptcha" autocomplete="off" method="post" target="captcha">
-						<button type="submit" class="btn btn-primary" id='BtnCaptcha' title="Veuillez choisir une date avant." disabled>Captcha</button>
+					<form class="mt-3" action="PHP/retourCaptcha.php" id="FormCaptcha" autocomplete="off" method="post" target="captcha">
+						<span id="defaultDisableCaptcha" data-toggle="tooltip" data-placement="top" title="Veuillez choisir une date avant.">
+							<button type="submit" class="btn btn-primary" style="pointer-events: none;" id='BtnCaptcha' disabled>Captcha</button>
+						</span>
 						<input type="text" placeholder="Captcha" class='mx-3' name="captcha"/>
 						<img src="PHP/captcha.php" onclick="this.src='PHP/captcha.php?' + Math.random();" alt="captcha" style="cursor:pointer;">
 					</form>
