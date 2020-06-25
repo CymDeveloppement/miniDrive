@@ -13,7 +13,12 @@
 	"Infos": {
 		"Nom_Entreprise": "TestEntrepise",
 		"Telephone": "0606060606",
-		"Email": "bdwineur@gmail.com",
+		"Email": "",
+		"SMTP": "",
+		"Port": "",
+		"Email_Server": "",
+		"Mdp": "",
+		"Emplacement_Mail_Html": "Mail.php",
 		"Conditions": "Emplacement des conditions d'utilisations",
 		"Monnaie": "€",
 		"Nombre_Jour_Recup": "5",
