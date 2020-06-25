@@ -2,6 +2,7 @@
 <?php
 	include("PHP/fonctions.php");
 	$Shop = new shop();
+	$Captcha = new captcha();
 	
 ?>
 <html lang="fr">
@@ -16,45 +17,54 @@
 <body>
 	<!-- Navbar -->
 	<div class="navbar navbar-expand-md navbar-dark bg-dark">
-		<div class="achat" id="defaultDisableAchat" data-toggle="tooltip" data-placement="bottom" title='Veuillez prendre un article avant de commander.'>
-			<input onclick='Commande(); AfficheTableau(<?php echo(json_encode($Shop->Infos->Monnaie)); ?>);' type='button' id='commandeBtn' class="btn btn-secondary text-white lx-auto h-75" style="pointer-events: none;" value='Commander' disabled></input>
-		</div>
-		
-		<div class="commande">
-			<input onclick='Retour()' type='button' class="btn btn-secondary text-white lx-auto h-75" value='Retour'></input>
-		</div>
-		
-		<div class="dropdown mx-auto">
-			<div class="text-center">
-				<a class="navbar-brand mb-0 h1" href="#">
+		<div class="row container-fluid">
+			<div class="col">
+				<span class="achat w-25" id="defaultDisableAchat" data-toggle="tooltip" data-placement="bottom" title='Veuillez prendre un article avant de commander.'>
+					<input onclick='Commande(); AfficheTableau(<?php echo(json_encode($Shop->Infos->Monnaie)); ?>);' type='button' id='commandeBtn' class="btn btn-secondary text-white lx-auto h-75" style="pointer-events: none;" value='Commander' disabled></input>
+				</span>
 				
-					<!-- Nom de l'entreprise -->
-					<?php echo($Shop->Infos->Nom_Entreprise); ?>
-				</a>
-				</br>
+				<div class="commande">
+					<input onclick='Retour()' type='button' class="btn btn-secondary text-white lx-auto h-75" value='Retour'></input>
+				</div>
+			</div>
+				
+			<div class="col justify-content-center mx-4">
+				<!-- Nom de l'entreprise -->
+				<div class="text-center">
+					<a class="navbar-brand text-center mb-0 h1" href="#">
+						
+						<?php echo($Shop->Infos->Nom_Entreprise); ?>
+					</a>
+					</br>
+				</div>
+				
+				<div class="achat dropdown text-center" >
+				
+					<!-- Bouton de la liste d'article -->
+					<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="50,100">
+						Liste des articles
+					</button>
+						
+					<!-- Liste -->
+					<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+						<?php
+							foreach($Shop->Produits as $produit)
+							{
+								$id = $Shop->idProd[$produit->nom];
+								echo("<button class='dropdown-item' data-toggle='modal' data-target='#article$id'>$produit->nom</button>");
+							}
+						?>
+					</div>
+				</div>
 			</div>
 			
-			<!-- Bouton de la liste d'article -->
-			<button class="btn btn-secondary dropdown-toggle achat" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				Liste des articles
-			</button>
-			
-			<!-- Liste -->
-			<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-				<?php
-					foreach($Shop->Produits as $produit)
-					{
-						$id = $Shop->idProd[$produit->nom];
-						echo("<button class='dropdown-item' data-toggle='modal' data-target='#article$id'>$produit->nom</button>");
-					}
-				?>
+			<!-- Logo -->
+			<div class="col text-right">
+				<a class="navbar-brand" href="#">
+					<img class="logo" src="Logo.png" width="140" height="100" >
+				</a>
 			</div>
 		</div>
-		
-		<!-- Logo -->
-		<a class="navbar-brand" href="#">
-			<img src="Logo.png" width="140" height="100" >
-		</a>
 	</div>
 	
 	<!-- Tableau d'articles -->
@@ -85,7 +95,7 @@
 								</div>
 								<div class='float-right'>
 									<input onclick='AcheterArticle(Acheterimg$id, $id, recap$id, $prix, $nomArticle[$id])' type='button' value='Acheter' class='btn btn-primary text-right' id='Acheterimg$id' style='display: block;'></input>
-									<div class='countAchat$id' style='display: block;'>
+									<div class='countAchat$id' style='display: none;'>
 										<div class='d-flex flex-row'>
 											<input onclick='MoinsArticle(Acheterimg$id, $id, recap$id, $prix, $nomArticle[$id])' type='button' value='-' class='btn btn-primary text-right' id='btn-' style='display: block;'></input>
 											<p class='h6 px-2 mt-2' id='recap$id'></p>
@@ -182,26 +192,15 @@
 						<!-- Affichage des horaires -->
 						<div class="container">
 							<?php
-								$intervalle = $Shop->Infos->Intervalle;
 								$nbBouton = 1;
-								foreach ($Shop->Horaires as $jours)
+								foreach($Shop->HeuresJours as $heures)
 								{
-									echo("<div class='justify-content-center row row-cols-4 mt-3' id='lotBouton$nbBouton'>");
-									for ($i = 0; $i < count(get_object_vars($jours)); $i+=2)
+									echo("<div class='justify-content-center row row-cols-4 mt-3' id='lotBouton$nbBouton' style='display: none;'>");
+									foreach($heures as $heure)
 									{
-										$id = "id"."$i";
-										$idPlusUn = 'id'.($i+1);
-										
-										$heureCompt = ($jours->$id);
-										
-										while($heureCompt <= ($jours->$idPlusUn))
-										{
-											$heureAffiche = intdiv($heureCompt,60)."H".$heureCompt%60;
-											echo("<label class='btn btn-outline-secondary col-sm-2 mx-1 my-1'>
-													<input type='radio' name='options' id='option1' autocomplete='off' onclick='ChoixHeure();' value='$heureAffiche'> $heureAffiche
+										echo("<label class='btn btn-outline-secondary col-sm-2 mx-1 my-1'>
+													<input type='radio' name='options' id='option1' autocomplete='off' onclick='ChoixHeure();' value='$heure'> $heure
 												</label>");
-											$heureCompt += $intervalle;
-										}
 									}
 									$nbBouton++;
 									echo("</div>");
@@ -241,12 +240,12 @@
 					</form>
 					
 					<!-- Captcha -->
-					<form class="mt-3" action="PHP/retourCaptcha.php" id="FormCaptcha" autocomplete="off" method="post" target="captcha">
+					<form class="mt-3" action="PHP/fonctions.php" id="FormCaptcha" autocomplete="off" method="post" target="captcha">
 						<span id="defaultDisableCaptcha" data-toggle="tooltip" data-placement="top" title="Veuillez choisir une date avant.">
 							<button type="submit" class="btn btn-primary" style="pointer-events: none;" id='BtnCaptcha' disabled>Captcha</button>
 						</span>
 						<input type="text" placeholder="Captcha" class='mx-3' name="captcha"/>
-						<img src="PHP/captcha.php" onclick="this.src='PHP/captcha.php?' + Math.random();" alt="captcha" style="cursor:pointer;">
+						<?php echo('<img src="data:image/png;base64,'.base64_encode($Captcha->CreateCaptcha()).'" alt="captcha" style="cursor:pointer;">'); ?>
 					</form>
 					
 					<iframe name="captcha" frameborder="0" height="40vh" width="400vw"></iframe>
@@ -256,7 +255,6 @@
 			</div>	
 		</div>
 	</div>
-	
 	<!-- Pied de page -->
 	<footer class="footer">
 		<div class="container ml-2">
@@ -267,7 +265,6 @@
 		<script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
 		<script type="text/javascript" src="DataTables/datatables.min.js"></script>
 		<script type="text/javascript" src="js/Shop.js"></script>
-		<script type="text/javascript">CacherNb(<?php echo($NbCard); ?>); CacherBtnHeure();</script>
 	</footer>
 </body>
 </html>

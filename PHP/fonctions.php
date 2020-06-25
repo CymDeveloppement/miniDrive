@@ -1,10 +1,161 @@
 <?php
+	session_start();
+	use PHPMailer\PHPMailer\PHPMailer;
+	use PHPMailer\PHPMailer\SMTP;
+	use PHPMailer\PHPMailer\Exception;
+	
+	if(isset($_POST['retour']))
+	{
+		$Shop = new shop();
+		$retour = new emailer($_POST['retour'], $Shop->Infos);
+		$retour->CreateMail();
+	}
+	
+	if(isset($_POST['captcha']))
+	{
+		if($_POST['captcha']==$_SESSION['code'])
+		{
+			echo "Code correct";
+			echo("<script type='text/javascript'>parent.AfficherBtnConfirmer();</script>");
+		} 
+		else 
+		{
+			echo "Code incorrect";
+		}
+	}
+	
+	class emailer
+	{
+		private $Host;
+		private $Port;
+		private $Username;
+		private $Pass;
+		private $Destinataire;
+		private $Emplacement;
+		private $commande = [];
+		private $total;
+		private $date;
+		private $heure;
+		private $prenomClient;
+		private $nomClient;
+		private $telClient;
+		private $emailClient;
+		
+		function __construct($data, $infos)
+		{
+			$this->Host = $infos->SMTP;
+			$this->Port = $infos->Port;
+			$this->Username = $infos->Email_Server;
+			$this->Pass = $infos->Mdp;
+			$this->Destinataire = $infos->Email;
+			$this->Emplacement = $infos->Emplacement_Mail_Html;
+			
+			foreach ($data as $key => $value) 
+			{
+				$this->{$key} = $value;
+			}
+		}
+		
+		public function CreateMail()
+		{
+			require 'vendor/autoload.php';
+
+			$mail = new PHPMailer(TRUE);
+			try {
+				$mail->isSMTP();
+				//$mail->SMTPDebug = 1;
+
+				$mail->Host = $this->Host;
+				
+				$mail->Port = $this->Port;
+
+				$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+
+				$mail->SMTPAuth = true;
+				$mail->Username   = $this->Username;
+				$mail->Password   = $this->Pass;
+
+				$mail->setFrom($this->Username);
+				$mail->addAddress($this->Destinataire);
+				
+				if ($this->Emplacement != "" && file_exists($this->Emplacement))
+				{
+					$mail->isHTML(true);
+					ob_start();
+					include 'mailAff.php';
+					$myvar = ob_get_clean();
+					$mail->Body = $myvar;
+				}
+				else
+				{
+					$mail->Body = "Le fichier html n'existe pas ou le chemin n'est pas le bon";
+				}
+				$mail->Subject = 'Commande ';
+				
+				$mail->send();
+				echo 'Message has been sent';
+			} 
+			catch (Exception $e) 
+			{
+				echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+			}
+		}
+	}
+	
+	class generateur_de_vue
+	{
+		function __construct($page)
+		{
+			
+		}
+	}
+	
+	class captcha
+	{
+		private function hexargb($hex) 
+		{
+			return array("r"=>hexdec(substr($hex,0,2)),"g"=>hexdec(substr($hex,2,2)),"b"=>hexdec(substr($hex,4,2)));
+		}
+		
+		public function CreateCaptcha()
+		{
+			$largeur=80;
+			$hauteur=25;
+			$lignes=10;
+			$caracteres="ABCDEFGHIJKLMNOP123456789";
+			$image = imagecreatetruecolor($largeur, $hauteur);
+			imagefilledrectangle($image, 0, 0, $largeur, $hauteur, imagecolorallocate($image, 255, 255, 255));
+				
+			for($i=0;$i<=$lignes;$i++)
+			{
+				$rgb=$this->hexargb(substr(str_shuffle("ABCDEF0123456789"),0,6));
+				imageline($image,rand(1,$largeur-25),rand(1,$hauteur),rand(1,$largeur+25),rand(1,$hauteur),imagecolorallocate($image, $rgb['r'], $rgb['g'], $rgb['b']));
+			}
+			$code1=substr(str_shuffle($caracteres),0,4);
+			$_SESSION['code']=$code1;
+			$code="";
+			for($i=0;$i<=strlen($code1);$i++)
+			{
+				$code .=substr($code1,$i,1)." ";
+			}
+			imagestring($image, 5, 10, 5, $code, imagecolorallocate($image, 0, 0, 0));
+			
+			ob_start();
+			imagepng($image);
+			$imgData=ob_get_clean();
+			imagedestroy($image);
+			
+			return($imgData);
+		}
+	}
+	
 	class produit
 	{
 		function __construct($data,$id)
 		{
 			$this->id = $id;
-			foreach ($data as $key => $value) {
+			foreach ($data as $key => $value) 
+			{
 				$this->{$key} = $value;
 			}
 		}
@@ -15,7 +166,8 @@
 		function __construct($data)
 		{
 			$id = 0;
-			foreach ($data as $key => $value) {
+			foreach ($data as $key => $value) 
+			{
 				$this->{'id'.$id} = $value;
 				$id++;
 			}
@@ -42,7 +194,8 @@
 		public $prix = [];
 		public $monnaie;
 		public $Jours;
-		public $intervalle;
+		public $Intervalle;
+		public $HeuresJours = [];
 		
 		function __construct() 
 		{
@@ -64,7 +217,7 @@
 			$this->FormatagePrix();
 			$this->Infos->Intervalle = $this->CalculeIntervalEnMinute($this->Infos->Intervalle);
 			
-			// Transforme tous les horaires d'ouvertures en minutes.
+			// Appel la fonction pour transformer les horaires en minutes
 			foreach ($this->Horaires as $keyHoraires => $listesHoraires)
 			{
 				foreach($listesHoraires as $keyListesHoraires => $horairesACalculer)
@@ -72,7 +225,7 @@
 					$this->Horaires[$keyHoraires]->$keyListesHoraires = $this->CalculeIntervalEnMinute($horairesACalculer);
 				}
 			}
-			
+			$this->CalculeHeuresJours($this->Horaires);
 			$this->Infos->Nom_Entreprise;
 			
 			$this->monnaie = $this->Infos->Monnaie;
@@ -107,6 +260,38 @@
 				}
 			}
 			return($heure);
+		}
+		
+		private function CalculeHeuresJours($heures)
+		{
+			$count = 1;
+			foreach ($this->Horaires as $jours)
+			{
+				$this->HeuresJours[$count] = [];
+				for ($i = 0; $i < count(get_object_vars($jours)); $i+=2)
+				{
+					$id = "id"."$i";
+					$idPlusUn = 'id'.($i+1);
+										
+					$heureCompt = ($jours->$id);
+					
+					while($heureCompt <= $jours->$idPlusUn)
+					{
+						if($heureCompt%60 == 0)
+						{
+							$heureAffiche = intdiv($heureCompt,60)."H00";
+						}
+						else
+						{
+							$heureAffiche = intdiv($heureCompt,60)."H".$heureCompt%60;
+						}
+						
+						array_push($this->HeuresJours[$count],($heureAffiche));
+						$heureCompt += $this->Infos->Intervalle;
+					}
+				}
+				$count++;
+			}
 		}
 		
 		//Fonction qui formate le prix pour séparer les euros et les centimes.
