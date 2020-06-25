@@ -81,6 +81,11 @@
 	max-width: 95vw !important;
 	width: 95vw;
   }
+  
+  .logo{
+	width: 80% !important;
+	height: 80% !important;
+  }
 }
 
 html {
@@ -3273,11 +3278,13 @@ input[type="button"].btn-block {
 .dropdown-toggle:empty::after {
   margin-left: 0;
 }
-
 .dropdown-menu {
   position: absolute;
   top: 100%;
-  left: 0;
+  left: 50%;
+  right: auto;
+  text-align: center;
+  transform: translate(-50%, 0);
   z-index: 1000;
   display: none;
   float: left;

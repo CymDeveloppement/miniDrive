@@ -1,59 +1,67 @@
 
-arrayCommande = {};
-arrayPrix = {};
-arrayProduit = {};
-var selectedDate;
-var selectedHeure;
+Produits = {};
 
-function AcheterArticle(button, num, idProduit, prix, nom)
+var selectedDate; // Variable contenant la date choisie par le client.
+var selectedHeure; // Variable contenant l'heure choisie par le client.
+var montantTotal; // Variable contenant le montant de la commande
+
+// Activation des tooltips de bootstrap.
+$(function () 
+{
+	$('[data-toggle="tooltip"]').tooltip()
+});
+
+
+// Fonction du bouton "Acheter" sous chaque article.
+function AcheterArticle(button, num, produit, prix, nom)
 {
 	var countAchats = document.querySelectorAll(".countAchat"+num);
+	
 	button.style.display = "none";
 	for (var achatButton of countAchats)
 	{
 		achatButton.style.display = "block";
 	}
-	idProduit.textContent = 1;
-	arrayCommande[idProduit.id] = 1;
-	arrayPrix[idProduit.id] = (Math.round(prix * 100) / 100).toFixed(2);
-	arrayProduit[idProduit.id] = nom;
-	if(Object.keys(arrayProduit).length !== 0)
+	produit.textContent = 1;
+	
+	Produits[produit.id] = {"Nom":nom, "Qte":1, "Prix":(Math.round(prix * 100) / 100).toFixed(2)};
+	
+	if(Object.keys(Produits).length !== 0)
 	{
 		$('#defaultDisableAchat').tooltip('disable');
 		$('#commandeBtn').prop('disabled', false);
 		document.getElementById("commandeBtn").style.pointerEvents = "all";
 	}
 }
-			
-function PlusArticle(num, idProduit, prix, nom)
-{
-	var countNum = parseInt(idProduit.textContent, 10);
-	var countAchats = document.querySelectorAll(".countAchat"+num);
 		
-	idProduit.textContent = countNum + 1;
-	arrayCommande[idProduit.id] = countNum + 1;
-	arrayPrix[idProduit.id] = (Math.round(prix * 100) / 100).toFixed(2);
-	arrayProduit[idProduit.id] = nom;
+// Fonction du bouton "+" sous chaque article.
+function PlusArticle(num, produit, prix, nom)
+{
+	var countNum = parseInt(produit.textContent, 10);
+	var countAchats = document.querySelectorAll(".countAchat"+num);
+	
+	produit.textContent = countNum + 1;
+	
+	Produits[produit.id] = {"Nom":nom, "Qte":countNum + 1, "Prix":(Math.round(prix * 100) / 100).toFixed(2)};
 }
 			
-function MoinsArticle(button, num, idProduit, prix, nom)
+// Fonction du bouton "-" sous chaque article.
+function MoinsArticle(button, num, produit, prix, nom)
 {
-	var countNum = parseInt(idProduit.textContent, 10);
+	var countNum = parseInt(produit.textContent, 10);
 	var countAchats = document.querySelectorAll(".countAchat"+num);
 				
-	if (idProduit.textContent == 1)
+	if (produit.textContent == 1)
 	{
-		idProduit.textContent = 0;
+		produit.textContent = 0;
 		button.style.display = "block";
 		for (var achatButton of countAchats)
 		{
 			achatButton.style.display = "none";
 		}
 		
-		delete arrayCommande[idProduit.id];
-		delete arrayPrix[idProduit.id];
-		delete arrayProduit[idProduit.id];
-		if(Object.keys(arrayProduit).length === 0)
+		delete Produits[produit.id];
+		if(Object.keys(Produits).length === 0)
 		{
 			$('#defaultDisableAchat').tooltip('enable');
 			$('#commandeBtn').prop('disabled', true);
@@ -62,33 +70,13 @@ function MoinsArticle(button, num, idProduit, prix, nom)
 	}
 	else
 	{
-		idProduit.textContent = countNum - 1;
+		produit.textContent = countNum - 1;
 		
-		arrayCommande[idProduit.id] = countNum - 1;
-		arrayPrix[idProduit.id] = (Math.round(prix * 100) / 100).toFixed(2);
-		arrayProduit[idProduit.id] = nom;
+		Produits[produit.id] = {"Nom":nom, "Qte":countNum - 1, "Prix":(Math.round(prix * 100) / 100).toFixed(2)};
 	}
 }
-
-function CacherNb(num)
-{
-	var nb = parseInt(num);
-	for (var i = 1; i <= nb; i++)
-	{
-		var countAchats = document.querySelector(".countAchat"+i);
-		countAchats.style.display = "none";
-	}
 	
-	$(function () {
-	  $('[data-toggle="tooltip"]').tooltip()
-	});
-}
-	
-function CountCommande()
-{
-	return(arrayCommande);
-}
-	
+// Fonction qui cache le bouton qui redirige vers le récapitulatif de la commande.
 function Commande()
 {
 	var DesacAchats = document.querySelectorAll(".achat");
@@ -104,6 +92,7 @@ function Commande()
 	}
 }
 
+// Fonction qui cache le bouton qui redirige vers la page d'achat.
 function Retour()
 {
 	var table = $('#Commande').DataTable();
@@ -121,18 +110,21 @@ function Retour()
 	table.destroy();
 }
 
+// Fonction qui affiche le tableau d'articles commandé.
 function AfficheTableau(monnaie)
 {
 	var dataSet = [];
-	var totalArgent = 0;
+	montantTotal = 0;
 	var totalQte = 0;
-	for (var objet of Object.keys(arrayCommande))
+	
+	for (var id in Produits)
 	{
-		totalArgent += arrayPrix[objet]*arrayCommande[objet];
-		totalQte += arrayCommande[objet];
-		dataSet.push([ arrayProduit[objet], String(arrayPrix[objet])+monnaie, arrayCommande[objet], String((Math.round(arrayPrix[objet]*arrayCommande[objet]* 100) / 100).toFixed(2))+monnaie ]);
+		montantTotal += Produits[id].Prix*Produits[id].Qte;
+		totalQte += Produits[id].Qte;
+		Produits[id].PrixQte = (Math.round(Produits[id].Prix*Produits[id].Qte* 100) / 100).toFixed(2);
+		dataSet.push([ Produits[id].Nom, String(Produits[id].Prix)+monnaie, Produits[id].Qte, String((Math.round(Produits[id].Prix*Produits[id].Qte* 100) / 100).toFixed(2))+monnaie ]);
 	}
-	dataSet.push([ "Total à payer", "/", "Total articles: "+totalQte, String((Math.round(totalArgent* 100) / 100).toFixed(2))+ monnaie ]);
+	dataSet.push([ "Total à payer", "/", "Total articles: "+totalQte, String((Math.round(montantTotal* 100) / 100).toFixed(2))+ monnaie ]);
 	
 	$(document).ready(function() {
 		$('#Commande').DataTable( {
@@ -151,9 +143,10 @@ function AfficheTableau(monnaie)
 			]
 		} );
 	} );
-	document.getElementById("PrixTotal").innerHTML = "Total à payer: "+String((Math.round(totalArgent* 100) / 100).toFixed(2))+ monnaie;
+	document.getElementById("PrixTotal").innerHTML = "Total à payer: "+String((Math.round(montantTotal* 100) / 100).toFixed(2))+ monnaie;
 }
 
+// Fonction qui gère le choix de la date.
 function DateSelect(date)
 {
 	var elem = document.getElementById('dropdownDate');
@@ -164,6 +157,7 @@ function DateSelect(date)
 	AfficherBtnHeures(date.getDay());
 }
 
+// Fonction qui affiche les heures correspondantes à la date choisie.
 function AfficherBtnHeures(nb)
 {
 	var i = 1;
@@ -184,14 +178,7 @@ function AfficherBtnHeures(nb)
 	}
 }
 
-function CacherBtnHeure()
-{
-	for(var lotBoutons of document.querySelectorAll('*[id^="lotBouton"]'))
-	{
-		lotBoutons.style.display = "none";
-	}
-}
-
+// Fonction qui s'occupe du choix de l'heure.
 function ChoixHeure()
 {
 	selectedHeure = $('#BoutonsSelectHeure input:radio:checked').val();
@@ -200,26 +187,28 @@ function ChoixHeure()
 	document.getElementById("BtnCaptcha").style.pointerEvents = "all";
 }
 
+// Fonction qui récupère les valeurs entrées par le client et les produits choisis pour les envoyer au php.
 function RetourData()
 {
 	var retour = {}
-	retour.prix = Object.values(arrayPrix);
-	retour.quantite = Object.values(arrayCommande);
-	retour.nom = Object.values(arrayProduit);
+	
+	retour.commande = Produits;
+	
 	retour.date = selectedDate;
 	retour.heure = selectedHeure;
+	retour.total = montantTotal.toFixed(2);
 	
 	var FormInfosClient = document.getElementById('FormInfosClient');
 	var data = new FormData(FormInfosClient);
 	
 	retour.prenomClient = data.get("PrenomClient");
 	retour.nomClient = data.get("NomClient");
-	retour.numeroClient = data.get("NumeroClient");
+	retour.telClient = data.get("NumeroClient");
 	retour.emailClient = data.get("EmailClient");
 	
 	$(document).ready(function(){
 		$.ajax({
-			url : "PHP/Retour.php",
+			url : "PHP/fonctions.php",
 			type: "POST",
 			data : {"retour" : retour},
 			success: function(response){
@@ -230,6 +219,7 @@ function RetourData()
 	return false;
 }
 
+// Fonction qui cache le captcha quand il est validé et qui active le boutton confirmé.
 function AfficherBtnConfirmer()
 {
 	document.getElementById("FormCaptcha").style.display = "none";
