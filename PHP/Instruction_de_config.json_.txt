@@ -22,8 +22,13 @@ PRODUITS:
 INFOS:
 	La catégorie infos est une liste, elle contient:
 		-le nom de l'entreprise,
-		-son téléphone,
-		-son email,
+		-le téléphone,
+		-l'email de récupération des commandes,
+		-le serveur SMTP,
+		-le port du serveur SMTP,
+		-l'email du serveur SMTP,
+		-le mot de passe de l'email du serveur SMTP,
+		-l'emplacement du fichier html/php qui sera envoyé par mail,
 		-les conditions d'utilisation,
 		-la monnaie utilisée,
 		-le nombre de jour d'avance à afficher pour la récupération de la commande,

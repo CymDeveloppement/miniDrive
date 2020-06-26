@@ -41,7 +41,7 @@
 				<div class="achat dropdown text-center" >
 				
 					<!-- Bouton de la liste d'article -->
-					<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="50,100">
+					<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						Liste des articles
 					</button>
 						
